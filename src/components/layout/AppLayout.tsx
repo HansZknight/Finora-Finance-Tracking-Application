@@ -116,6 +116,7 @@ export function AppLayout() {
             <NavLink
               key={item.href}
               to={item.href}
+              replace={true}
               className={({ isActive }) =>
                 cn(
                   "flex items-center gap-3 rounded-full px-4 py-3 text-sm font-medium transition-all duration-200 hover:text-primary hover:bg-primary/5",
@@ -197,6 +198,7 @@ export function AppLayout() {
                 >
                   <NavLink
                     to={item.href}
+                    replace={true}
                     onClick={() => setIsMobileMenuOpen(false)}
                     className={({ isActive }) =>
                       cn(
