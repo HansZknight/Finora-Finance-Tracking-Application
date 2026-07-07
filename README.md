@@ -13,6 +13,20 @@
 
 <hr />
 
+## 📸 App Screenshots
+
+> **Note to developer:** *Replace the placeholder image sources below with actual screenshots of your app (e.g., `public/screenshots/dashboard.png`).*
+
+<div align="center">
+  <img src="https://placehold.co/250x500/1e1e2f/ffffff?text=Dashboard" alt="Dashboard Screenshot" width="250" />
+  &nbsp;&nbsp;
+  <img src="https://placehold.co/250x500/1e1e2f/ffffff?text=AI+Scanner" alt="AI Scanner Screenshot" width="250" />
+  &nbsp;&nbsp;
+  <img src="https://placehold.co/250x500/1e1e2f/ffffff?text=Biometric+Vault" alt="Security Vault Screenshot" width="250" />
+</div>
+
+<br/>
+
 ## ✨ The Next-Generation Finance App
 
 Finora is not just another expense tracker. It is a **Progressive Web App (PWA)** engineered to deliver a native-like experience directly in your browser without the need for an App Store. Designed with a focus on speed, privacy, and cutting-edge features.
@@ -69,6 +83,10 @@ This project is highly optimized for serverless platforms like Vercel.
 ## 🔒 Privacy Guarantee
 
 Finora is built on the philosophy of absolute privacy. We **do not** collect your financial data. All transactions, goals, budgets, and biometric credentials remain securely encrypted and stored entirely on your local device.
+
+## 📄 License
+
+This project is licensed under the **MIT License** - see the [LICENSE](LICENSE) file for details. This means you are free to use, modify, and distribute the software as long as you include the original copyright and license notice.
 
 ---
 <div align="center">
