@@ -23,7 +23,7 @@ const getTypeIcon = (type: Investment["type"]) => {
 }
 
 export function Investments() {
-  const { investments, currency, deleteInvestment } = useFinance()
+  const { investments, currency } = useFinance()
   const [isInvestModalOpen, setIsInvestModalOpen] = useState(false)
   const [isUpdatePriceOpen, setIsUpdatePriceOpen] = useState(false)
   const [selectedInvestment, setSelectedInvestment] = useState<Investment | null>(null)

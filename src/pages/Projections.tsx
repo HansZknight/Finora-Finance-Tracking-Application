@@ -11,7 +11,7 @@ export function Projections() {
   const [expenseModifier, setExpenseModifier] = useState(0) // percentage
   const [incomeModifier, setIncomeModifier] = useState(0) // percentage
 
-  const { chartData, insights, finalBalance, startingBalance, avgVariableExpense, avgVariableIncome, baseMonthlyIncome, baseMonthlyExpense } = useMemo(() => {
+  const { chartData, insights, finalBalance, startingBalance, baseMonthlyIncome, baseMonthlyExpense } = useMemo(() => {
     const now = new Date()
     
     // Calculate Starting Balance (All history)
@@ -106,7 +106,6 @@ export function Projections() {
     }
 
     const finalBalance = currentBalance
-    const isPositiveTrend = finalBalance >= startingBalance
 
     // Generate insights
     const insights = []
@@ -124,7 +123,7 @@ export function Projections() {
       insights.push(`Debt payments are automatically deducted in their due month for this projection.`)
     }
 
-    return { chartData: data, insights, finalBalance, startingBalance, avgVariableExpense, avgVariableIncome, baseMonthlyIncome, baseMonthlyExpense }
+    return { chartData: data, insights, finalBalance, startingBalance, baseMonthlyIncome, baseMonthlyExpense }
   }, [transactions, debts, currency, expenseModifier, incomeModifier])
 
   const trendColor = finalBalance >= startingBalance ? "text-emerald-500" : "text-destructive"

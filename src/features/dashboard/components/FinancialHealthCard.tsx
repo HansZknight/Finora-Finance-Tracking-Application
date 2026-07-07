@@ -70,13 +70,10 @@ export function FinancialHealthCard() {
 
   // Get score color
   let scoreColor = "text-emerald-500"
-  let scoreBg = "bg-emerald-500"
   if (score < 50) {
     scoreColor = "text-destructive"
-    scoreBg = "bg-destructive"
   } else if (score < 80) {
     scoreColor = "text-yellow-500"
-    scoreBg = "bg-yellow-500"
   }
 
   const circumference = 2 * Math.PI * 40

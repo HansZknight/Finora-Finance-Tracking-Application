@@ -124,9 +124,7 @@ export function WalletModal({ isOpen, onClose, walletToEdit }: WalletModalProps)
             <select
               id="wallet-currency"
               className="flex h-10 w-full items-center justify-between rounded-md border border-input bg-background px-3 py-2 text-sm ring-offset-background placeholder:text-muted-foreground focus:outline-none focus:ring-2 focus:ring-ring focus:ring-offset-2"
-              value={walletCurrency}
-              onChange={(e) => setWalletCurrency(e.target.value)}
-              required
+              onChange={(e) => setWalletCurrency(e.target.value as any)}
             >
               <option value="IDR">🇮🇩 IDR - Indonesian Rupiah</option>
               <option value="USD">🇺🇸 USD - US Dollar</option>

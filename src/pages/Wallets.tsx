@@ -1,5 +1,5 @@
 import { useState, useMemo } from "react"
-import { Plus, Wallet as WalletIcon, ArrowRightLeft, CreditCard, Banknote, Landmark } from "lucide-react"
+import { Plus, Wallet as WalletIcon, CreditCard, Banknote, Landmark } from "lucide-react"
 import { motion, AnimatePresence } from "framer-motion"
 
 import { useFinance } from "@/store/FinanceContext"

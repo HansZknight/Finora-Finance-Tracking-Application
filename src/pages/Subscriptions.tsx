@@ -166,7 +166,7 @@ export function Subscriptions() {
           <AnimatePresence>
             {subscriptions.map((sub, index) => {
               const brand = detectBrand(sub.title)
-              const cardBg = brand?.bg || getCategoryColor(sub.categoryId)
+              const cardBg = brand?.bg || getCategoryColor(sub.categoryId || "")
               const cardGlow = brand?.glow || cardBg
 
               return (
@@ -198,7 +198,7 @@ export function Subscriptions() {
                           </div>
                           <div>
                             <CardTitle className="text-lg">{sub.title}</CardTitle>
-                            <CardDescription className="text-xs">{getCategoryName(sub.categoryId)}</CardDescription>
+                            <CardDescription className="text-xs">{getCategoryName(sub.categoryId || "")}</CardDescription>
                           </div>
                         </div>
                       </div>

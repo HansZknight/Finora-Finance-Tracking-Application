@@ -32,7 +32,7 @@ import { Button } from "@/components/ui/button"
 
 import { useFinance } from "@/store/FinanceContext"
 import type { Transaction } from "@/types"
-import { ArrowRight, Paperclip, X, Loader2 } from "lucide-react"
+import { Paperclip, X, Loader2 } from "lucide-react"
 import { compressImageToBase64 } from "@/lib/utils"
 
 const transactionFormSchema = z.object({
@@ -44,7 +44,7 @@ const transactionFormSchema = z.object({
   date: z.string().min(1, "Date is required"),
   type: z.enum(["income", "expense", "transfer"]),
   notes: z.string().optional(),
-  tags: z.array(z.string()).default([]),
+  tags: z.array(z.string()).optional(),
   isRecurring: z.boolean().optional(),
   recurringFrequency: z.enum(["daily", "weekly", "monthly"]).optional(),
   receipt: z.string().optional(),
@@ -179,7 +179,7 @@ export function TransactionModal({
       date: new Date(data.date).toISOString(), // Ensure ISO format
       type: data.type,
       notes: data.notes,
-      tags: data.tags,
+      tags: data.tags || [],
       isRecurring: data.isRecurring || false,
       recurringFrequency: data.isRecurring ? data.recurringFrequency : undefined,
       receipt: data.receipt,
@@ -409,13 +409,13 @@ export function TransactionModal({
                   <FormLabel>Tags (Press Enter)</FormLabel>
                   <FormControl>
                     <div className="flex flex-wrap gap-2 p-2 border rounded-md min-h-[44px] bg-background">
-                      {field.value.map((tag: string, index: number) => (
+                      {(field.value || []).map((tag: string, index: number) => (
                         <div key={index} className="flex items-center gap-1 bg-primary/10 text-primary px-2 py-1 rounded-full text-xs font-medium">
                           #{tag}
                           <button
                             type="button"
                             onClick={() => {
-                              const newTags = [...field.value]
+                              const newTags = [...(field.value || [])]
                               newTags.splice(index, 1)
                               field.onChange(newTags)
                             }}
@@ -427,14 +427,14 @@ export function TransactionModal({
                       ))}
                       <input
                         type="text"
-                        placeholder={field.value.length === 0 ? "Add tags like 'Lunch' or 'Vacation'..." : ""}
+                        placeholder={(!field.value || field.value.length === 0) ? "Add tags like 'Lunch' or 'Vacation'..." : ""}
                         className="flex-1 bg-transparent outline-none text-sm min-w-[120px]"
                         onKeyDown={(e) => {
                           if (e.key === 'Enter' || e.key === ',') {
                             e.preventDefault()
                             const value = e.currentTarget.value.trim().replace(/^#/, '')
-                            if (value && !field.value.includes(value)) {
-                              field.onChange([...field.value, value])
+                            if (value && !(field.value || []).includes(value)) {
+                              field.onChange([...(field.value || []), value])
                             }
                             e.currentTarget.value = ""
                           }

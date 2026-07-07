@@ -154,8 +154,8 @@ export function Settings() {
             <CardContent>
               <div className="relative w-full sm:w-[280px]">
                 <select 
-                  value={currency} 
-                  onChange={(e) => setCurrency(e.target.value)}
+                  value={currency}
+                  onChange={(e) => setCurrency(e.target.value as any)}
                   className="w-full appearance-none bg-background border border-input shadow-sm rounded-md px-3 py-2 pr-8 text-sm focus:outline-none focus:ring-2 focus:ring-ring focus:ring-offset-2 text-foreground cursor-pointer transition-colors hover:bg-accent/50"
                 >
                   <option value="IDR">🇮🇩 IDR - Indonesian Rupiah</option>

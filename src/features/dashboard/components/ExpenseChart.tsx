@@ -20,15 +20,16 @@ export function ExpenseChart() {
 
     transactions.forEach((t) => {
       if (t.type === "expense") {
-        if (!expensesByCategory[t.categoryId]) {
-          const category = categories.find((c) => c.id === t.categoryId)
-          expensesByCategory[t.categoryId] = {
+        const catId = t.categoryId || "uncategorized"
+        if (!expensesByCategory[catId]) {
+          const category = categories.find((c) => c.id === catId)
+          expensesByCategory[catId] = {
             value: 0,
             color: category?.color || "#8884d8",
-            name: category?.name || "Unknown",
+            name: category?.name || "Uncategorized",
           }
         }
-        expensesByCategory[t.categoryId].value += t.amount
+        expensesByCategory[catId].value += t.amount
       }
     })
 

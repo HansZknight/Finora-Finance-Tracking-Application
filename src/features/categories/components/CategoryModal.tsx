@@ -35,7 +35,7 @@ import type { Category } from "@/types"
 
 const categoryFormSchema = z.object({
   name: z.string().min(1, "Name is required"),
-  type: z.enum(["income", "expense", "both"]),
+  type: z.enum(["income", "expense", "both", "transfer"]),
   color: z.string().optional(),
 })
 
