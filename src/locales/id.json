@@ -1,0 +1,57 @@
+{
+  "nav": {
+    "dashboard": "Dasbor",
+    "projections": "Proyeksi",
+    "transactions": "Transaksi",
+    "wallets": "Dompet",
+    "investments": "Investasi",
+    "categories": "Kategori",
+    "subscriptions": "Langganan",
+    "debts": "Hutang & Pinjaman",
+    "budget": "Anggaran",
+    "goals": "Tujuan",
+    "settings": "Pengaturan",
+    "search": "Cari..."
+  },
+  "dashboard": {
+    "welcome": "Selamat datang di Finora.",
+    "subtitle": "Berikut adalah ringkasan yang jelas dan indah tentang kesehatan keuangan Anda hari ini.",
+    "printReport": "Cetak Laporan",
+    "totalNetWorth": "Total Kekayaan Bersih",
+    "walletBalance": "Saldo Dompet",
+    "totalIncome": "Total Pemasukan",
+    "totalExpenses": "Total Pengeluaran",
+    "savingsRate": "Tingkat Tabungan",
+    "currentAvailableFunds": "Dana yang tersedia saat ini",
+    "lifetimeEarnings": "Penghasilan seumur hidup",
+    "lifetimeSpending": "Pengeluaran seumur hidup",
+    "ofTotalIncomeSaved": "Dari total pendapatan yang ditabung",
+    "allWallets": "Semua Dompet (Kekayaan Bersih)",
+    "smartInsights": "Wawasan AI Cerdas",
+    "financialHealth": "Kesehatan Finansial & Gamifikasi",
+    "financialHealthDesc": "Skor keuangan Anda berdasarkan disiplin anggaran, tabungan, dan hutang.",
+    "excellent": "Sangat Baik",
+    "good": "Baik",
+    "fair": "Cukup",
+    "needsAttention": "Perlu Perhatian",
+    "recentTransactions": "Transaksi Terbaru",
+    "viewAll": "Lihat Semua",
+    "noTransactions": "Belum ada transaksi. Tambahkan untuk melihatnya di sini.",
+    "badges": {
+      "unlocked": "Lencana Terbuka",
+      "score": "Skor",
+      "unlock": "Buka"
+    }
+  },
+  "settings": {
+    "title": "Pengaturan",
+    "subtitle": "Kelola preferensi dan pengaturan aplikasi Anda.",
+    "language": "Bahasa",
+    "languageDesc": "Pilih bahasa pilihan Anda untuk antarmuka.",
+    "appearance": "Penampilan",
+    "currency": "Mata Uang",
+    "save": "Simpan Pengaturan",
+    "english": "Inggris (English)",
+    "indonesian": "Indonesia"
+  }
+}

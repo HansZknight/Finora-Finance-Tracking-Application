@@ -1,0 +1,57 @@
+{
+  "nav": {
+    "dashboard": "Dashboard",
+    "projections": "Projections",
+    "transactions": "Transactions",
+    "wallets": "Wallets",
+    "investments": "Investments",
+    "categories": "Categories",
+    "subscriptions": "Subscriptions",
+    "debts": "Debts & Loans",
+    "budget": "Budget",
+    "goals": "Goals",
+    "settings": "Settings",
+    "search": "Search..."
+  },
+  "dashboard": {
+    "welcome": "Welcome to Finora.",
+    "subtitle": "Here's a clear, beautiful overview of your financial health today.",
+    "printReport": "Print Report",
+    "totalNetWorth": "Total Net Worth",
+    "walletBalance": "Wallet Balance",
+    "totalIncome": "Total Income",
+    "totalExpenses": "Total Expenses",
+    "savingsRate": "Savings Rate",
+    "currentAvailableFunds": "Current available funds",
+    "lifetimeEarnings": "Lifetime earnings",
+    "lifetimeSpending": "Lifetime spending",
+    "ofTotalIncomeSaved": "Of total income saved",
+    "allWallets": "All Wallets (Net Worth)",
+    "smartInsights": "Smart AI Insights",
+    "financialHealth": "Financial Health & Gamification",
+    "financialHealthDesc": "Your overall financial score based on budget discipline, savings, and debts.",
+    "excellent": "Excellent",
+    "good": "Good",
+    "fair": "Fair",
+    "needsAttention": "Needs Attention",
+    "recentTransactions": "Recent Transactions",
+    "viewAll": "View All",
+    "noTransactions": "No transactions yet. Add some to see them here.",
+    "badges": {
+      "unlocked": "Unlocked Badges",
+      "score": "Score",
+      "unlock": "Unlock"
+    }
+  },
+  "settings": {
+    "title": "Settings",
+    "subtitle": "Manage your preferences and application settings.",
+    "language": "Language",
+    "languageDesc": "Choose your preferred language for the interface.",
+    "appearance": "Appearance",
+    "currency": "Currency",
+    "save": "Save Settings",
+    "english": "English",
+    "indonesian": "Indonesian"
+  }
+}

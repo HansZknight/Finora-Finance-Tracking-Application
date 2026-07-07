@@ -1,0 +1,158 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+@layer base {
+  :root {
+    --background: 0 0% 98%;
+    --foreground: 240 10% 3.9%;
+    --card: 0 0% 100%;
+    --card-foreground: 240 10% 3.9%;
+    --popover: 0 0% 100%;
+    --popover-foreground: 240 10% 3.9%;
+    
+    /* Electric Indigo Primary */
+    --primary: 243 75% 59%;
+    --primary-foreground: 0 0% 100%;
+    
+    --secondary: 240 4.8% 95.9%;
+    --secondary-foreground: 240 5.9% 10%;
+    
+    --muted: 240 4.8% 95.9%;
+    --muted-foreground: 240 3.8% 46.1%;
+    
+    --accent: 240 4.8% 95.9%;
+    --accent-foreground: 240 5.9% 10%;
+    
+    --destructive: 0 84.2% 60.2%;
+    --destructive-foreground: 0 0% 98%;
+    
+    --success: 142.1 76.2% 36.3%;
+    --success-foreground: 355.7 100% 97.3%;
+    --warning: 37.7 92.1% 50.2%;
+    --warning-foreground: 355.7 100% 97.3%;
+
+    --border: 240 5.9% 90%;
+    --input: 240 5.9% 90%;
+    --ring: 243 75% 59%;
+    --radius: 1rem;
+  }
+ 
+  .dark {
+    --background: 240 10% 3.9%;
+    --foreground: 0 0% 98%;
+    --card: 240 10% 7%;
+    --card-foreground: 0 0% 98%;
+    --popover: 240 10% 7%;
+    --popover-foreground: 0 0% 98%;
+    
+    --primary: 243 75% 59%;
+    --primary-foreground: 0 0% 100%;
+    
+    --secondary: 240 3.7% 15.9%;
+    --secondary-foreground: 0 0% 98%;
+    
+    --muted: 240 3.7% 15.9%;
+    --muted-foreground: 240 5% 64.9%;
+    
+    --accent: 240 3.7% 15.9%;
+    --accent-foreground: 0 0% 98%;
+    
+    --destructive: 0 62.8% 30.6%;
+    --destructive-foreground: 0 0% 98%;
+    
+    --success: 142.1 76.2% 36.3%;
+    --success-foreground: 355.7 100% 97.3%;
+    --warning: 37.7 92.1% 50.2%;
+    --warning-foreground: 355.7 100% 97.3%;
+ 
+    --border: 240 3.7% 15.9%;
+    --input: 240 3.7% 15.9%;
+    --ring: 221.2 83.2% 53.3%;
+  }
+
+  /* Utility to hide scrollbar for horizontal scrolling containers */
+  .hide-scrollbar::-webkit-scrollbar {
+    display: none;
+  }
+  .hide-scrollbar {
+    -ms-overflow-style: none;
+    scrollbar-width: none;
+  }
+}
+
+@media print {
+  @page { margin: 1cm; }
+  html, body, #root, .overflow-hidden, .overflow-x-hidden, .min-h-screen {
+    overflow: visible !important;
+    height: auto !important;
+    min-height: auto !important;
+    background-color: white !important;
+    color: black !important;
+  }
+  /* Hide sidebar and mobile nav */
+  aside, header { display: none !important; }
+  /* Hide all buttons and interactive elements */
+  button, a { display: none !important; }
+  /* Ensure main content takes full width */
+  main {
+    padding: 0 !important;
+    margin: 0 !important;
+    width: 100% !important;
+    max-width: 100% !important;
+    overflow: visible !important;
+  }
+  
+  /* Remove backgrounds, shadows and blurs */
+  .border { border-color: #e5e7eb !important; border-width: 1px !important; }
+  .shadow-sm, .shadow-lg, .shadow-md { box-shadow: none !important; }
+  .bg-card, .bg-background, .bg-muted { background-color: white !important; }
+  .blur-3xl { display: none !important; }
+  
+  /* Reset text color on gradients so text is visible on white background */
+  .text-transparent {
+    -webkit-text-fill-color: black !important;
+    color: black !important;
+    background: none !important;
+  }
+  
+  /* Layout adjustments for A4 */
+  .grid {
+    display: flex !important;
+    flex-direction: column !important;
+    gap: 2rem !important;
+  }
+  
+  .overflow-x-auto {
+    flex-wrap: wrap !important;
+    overflow: visible !important;
+  }
+  
+  /* Prevent page breaks inside cards */
+  .rounded-xl, .rounded-2xl, .bg-card, section {
+    break-inside: avoid;
+    page-break-inside: avoid;
+    margin-bottom: 2rem !important;
+  }
+
+  /* Make charts scale properly */
+  .recharts-wrapper { max-width: 100% !important; height: auto !important; }
+  
+  /* Text colors */
+  h1, h2, h3, h4, h5, p, span, div {
+    color: #111827 !important;
+  }
+  .text-muted-foreground { color: #6b7280 !important; }
+  
+  /* Specifically hide elements with print:hidden */
+  .print\:hidden, .print-hidden { display: none !important; }
+}
+ 
+@layer base {
+  * {
+    @apply border-border;
+  }
+  body {
+    @apply bg-background text-foreground font-sans;
+  }
+}
