@@ -15,14 +15,12 @@
 
 ## 📸 App Screenshots
 
-> **Note to developer:** *Replace the placeholder image sources below with actual screenshots of your app (e.g., `public/screenshots/dashboard.png`).*
-
 <div align="center">
-  <img src="https://placehold.co/250x500/1e1e2f/ffffff?text=Dashboard" alt="Dashboard Screenshot" width="250" />
+  <img src="public/Screenshots/dashboard.png" alt="Dashboard Screenshot" width="250" />
   &nbsp;&nbsp;
-  <img src="https://placehold.co/250x500/1e1e2f/ffffff?text=AI+Scanner" alt="AI Scanner Screenshot" width="250" />
+  <img src="public/Screenshots/ai-scanner.png" alt="AI Scanner Screenshot" width="250" />
   &nbsp;&nbsp;
-  <img src="https://placehold.co/250x500/1e1e2f/ffffff?text=Biometric+Vault" alt="Security Vault Screenshot" width="250" />
+  <img src="public/Screenshots/biometric-vault.png" alt="Security Vault Screenshot" width="250" />
 </div>
 
 <br/>
