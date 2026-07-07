@@ -32,7 +32,7 @@ import { Button } from "@/components/ui/button"
 
 import { useFinance } from "@/store/FinanceContext"
 import type { Transaction } from "@/types"
-import { Paperclip, X, Loader2 } from "lucide-react"
+import { Paperclip, X, Loader2, Camera, Sparkles } from "lucide-react"
 import { compressImageToBase64 } from "@/lib/utils"
 
 const transactionFormSchema = z.object({
@@ -106,6 +106,49 @@ export function TransactionModal({
   const currentWallet = wallets.find(w => w.id === currentWalletId)
   const currentWalletCurrency = currentWallet?.currency || currency
   const [isCompressing, setIsCompressing] = useState(false)
+  const [isScanning, setIsScanning] = useState(false)
+  const [scanStatus, setScanStatus] = useState("")
+
+  const handleScanReceipt = async (e: React.ChangeEvent<HTMLInputElement>) => {
+    const file = e.target.files?.[0]
+    if (!file) return
+
+    try {
+      setIsScanning(true)
+      
+      // First compress the image to attach it to the form
+      const base64 = await compressImageToBase64(file, 800, 0.6)
+      form.setValue("receipt", base64, { shouldValidate: true })
+
+      // Run OCR dynamically
+      const { scanReceipt } = await import("@/lib/ocr")
+      const result = await scanReceipt(file, (msg) => setScanStatus(msg))
+
+      let updated = false
+      if (result.amount) {
+        form.setValue("amount", result.amount, { shouldValidate: true })
+        updated = true
+      }
+      if (result.merchantName && result.merchantName !== "Unknown Store") {
+        form.setValue("title", result.merchantName, { shouldValidate: true })
+        updated = true
+      }
+
+      if (updated) {
+        toast.success("AI successfully read your receipt!")
+      } else {
+        toast.error("AI couldn't find clear text on the receipt.")
+      }
+
+    } catch (error) {
+      console.error("OCR Error:", error)
+      toast.error("Failed to scan receipt")
+    } finally {
+      setIsScanning(false)
+      setScanStatus("")
+      if (e.target) e.target.value = ''
+    }
+  }
 
   const handleFileUpload = async (e: React.ChangeEvent<HTMLInputElement>) => {
     const file = e.target.files?.[0]
@@ -463,22 +506,42 @@ export function TransactionModal({
 
             <div className="space-y-2 border p-4 rounded-md">
               <FormLabel>Attachment / Receipt (Optional)</FormLabel>
-              <div className="flex items-center gap-4">
+              <div className="flex flex-col sm:flex-row items-start sm:items-center gap-4">
+                <Button 
+                  type="button" 
+                  className="relative overflow-hidden w-full sm:w-auto bg-gradient-to-r from-indigo-500 to-primary text-white shadow-lg shadow-indigo-500/25 border-0 hover:from-indigo-600 hover:to-primary/90"
+                  disabled={isScanning || isCompressing}
+                >
+                  {isScanning ? <Loader2 className="w-4 h-4 mr-2 animate-spin" /> : <Camera className="w-4 h-4 mr-2" />}
+                  {isScanning ? scanStatus : "AI Smart Scan"}
+                  {!isScanning && <Sparkles className="w-3 h-3 ml-2 text-yellow-300" />}
+                  <input 
+                    type="file" 
+                    accept="image/*"
+                    capture="environment"
+                    onChange={handleScanReceipt}
+                    className="absolute inset-0 opacity-0 cursor-pointer"
+                    disabled={isScanning || isCompressing}
+                  />
+                </Button>
+
                 <Button 
                   type="button" 
                   variant="outline" 
                   className="relative overflow-hidden w-full sm:w-auto"
-                  disabled={isCompressing}
+                  disabled={isScanning || isCompressing}
                 >
                   {isCompressing ? <Loader2 className="w-4 h-4 mr-2 animate-spin" /> : <Paperclip className="w-4 h-4 mr-2" />}
-                  {isCompressing ? "Processing..." : "Upload Receipt"}
+                  {isCompressing ? "Processing..." : "Manual Upload"}
                   <input 
                     type="file" 
                     accept="image/*"
                     onChange={handleFileUpload}
                     className="absolute inset-0 opacity-0 cursor-pointer"
+                    disabled={isScanning || isCompressing}
                   />
                 </Button>
+                
                 {currentReceipt && (
                   <div className="relative w-12 h-12 rounded-md overflow-hidden border shadow-sm group">
                     <img src={currentReceipt} alt="Receipt preview" className="w-full h-full object-cover" />
