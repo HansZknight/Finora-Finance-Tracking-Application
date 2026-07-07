@@ -31,7 +31,7 @@ const INVESTMENT_TYPES = [
 ]
 
 export function InvestmentModal({ isOpen, onClose, investmentToEdit }: InvestmentModalProps) {
-  const { addInvestment, updateInvestment } = useFinance()
+  const { addInvestment, updateInvestment, deleteInvestment } = useFinance()
   
   const [name, setName] = useState("")
   const [symbol, setSymbol] = useState("")
@@ -106,6 +106,14 @@ export function InvestmentModal({ isOpen, onClose, investmentToEdit }: Investmen
     }
 
     onClose()
+  }
+
+  const handleDelete = () => {
+    if (investmentToEdit && window.confirm("Are you sure you want to delete this investment? This action cannot be undone.")) {
+      deleteInvestment(investmentToEdit.id)
+      toast.success("Investment deleted successfully")
+      onClose()
+    }
   }
 
   return (
@@ -213,13 +221,20 @@ export function InvestmentModal({ isOpen, onClose, investmentToEdit }: Investmen
             </div>
           </div>
 
-          <DialogFooter className="pt-4">
-            <Button type="button" variant="outline" onClick={onClose}>
-              Cancel
-            </Button>
-            <Button type="submit">
-              {investmentToEdit ? "Save Changes" : "Add Investment"}
-            </Button>
+          <DialogFooter className="pt-4 flex sm:justify-between items-center w-full">
+            {investmentToEdit ? (
+              <Button type="button" variant="destructive" onClick={handleDelete} className="mr-auto sm:mr-0">
+                Delete
+              </Button>
+            ) : <div />}
+            <div className="flex gap-2">
+              <Button type="button" variant="outline" onClick={onClose}>
+                Cancel
+              </Button>
+              <Button type="submit">
+                {investmentToEdit ? "Save Changes" : "Add Investment"}
+              </Button>
+            </div>
           </DialogFooter>
         </form>
       </DialogContent>
