@@ -65,7 +65,7 @@ npm install
 npm run dev
 ```
 
-Visit `http://localhost:5173` to view the application.
+Visit `https://finora-finance-tracking-application.vercel.app/` to view the application.
 
 ## 📦 Deployment (Vercel)
 
