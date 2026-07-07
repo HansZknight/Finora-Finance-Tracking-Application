@@ -39,7 +39,9 @@ export function InvestmentModal({ isOpen, onClose, investmentToEdit }: Investmen
   const [quantity, setQuantity] = useState("")
   const [averageBuyPrice, setAverageBuyPrice] = useState("")
   const [currentPrice, setCurrentPrice] = useState("")
+  const [currentPrice, setCurrentPrice] = useState("")
   const [color, setColor] = useState("#10b981")
+  const [isConfirmingDelete, setIsConfirmingDelete] = useState(false)
 
   useEffect(() => {
     if (isOpen) {
@@ -60,6 +62,7 @@ export function InvestmentModal({ isOpen, onClose, investmentToEdit }: Investmen
         setCurrentPrice("")
         setColor("#10b981")
       }
+      setIsConfirmingDelete(false)
     }
   }, [isOpen, investmentToEdit])
 
@@ -109,9 +112,15 @@ export function InvestmentModal({ isOpen, onClose, investmentToEdit }: Investmen
   }
 
   const handleDelete = () => {
-    if (investmentToEdit && window.confirm("Are you sure you want to delete this investment? This action cannot be undone.")) {
+    if (!isConfirmingDelete) {
+      setIsConfirmingDelete(true)
+      return
+    }
+
+    if (investmentToEdit) {
       deleteInvestment(investmentToEdit.id)
       toast.success("Investment deleted successfully")
+      setIsConfirmingDelete(false)
       onClose()
     }
   }
@@ -221,17 +230,22 @@ export function InvestmentModal({ isOpen, onClose, investmentToEdit }: Investmen
             </div>
           </div>
 
-          <DialogFooter className="pt-4 flex sm:justify-between items-center w-full">
+          <DialogFooter className="pt-4 flex flex-col sm:flex-row sm:justify-between gap-2 sm:gap-0 w-full">
             {investmentToEdit ? (
-              <Button type="button" variant="destructive" onClick={handleDelete} className="mr-auto sm:mr-0">
-                Delete
+              <Button 
+                type="button" 
+                variant={isConfirmingDelete ? "destructive" : "outline"} 
+                onClick={handleDelete} 
+                className={`w-full sm:w-auto ${!isConfirmingDelete && "border-destructive text-destructive hover:bg-destructive hover:text-destructive-foreground"}`}
+              >
+                {isConfirmingDelete ? "Tap again to confirm" : "Delete Asset"}
               </Button>
-            ) : <div />}
-            <div className="flex gap-2">
-              <Button type="button" variant="outline" onClick={onClose}>
+            ) : <div className="hidden sm:block" />}
+            <div className="flex flex-col sm:flex-row gap-2 w-full sm:w-auto">
+              <Button type="button" variant="outline" onClick={() => { setIsConfirmingDelete(false); onClose(); }} className="w-full sm:w-auto">
                 Cancel
               </Button>
-              <Button type="submit">
+              <Button type="submit" className="w-full sm:w-auto" disabled={isConfirmingDelete}>
                 {investmentToEdit ? "Save Changes" : "Add Investment"}
               </Button>
             </div>
