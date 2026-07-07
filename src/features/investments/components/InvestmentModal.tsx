@@ -36,6 +36,7 @@ export function InvestmentModal({ isOpen, onClose, investmentToEdit }: Investmen
   const [name, setName] = useState("")
   const [symbol, setSymbol] = useState("")
   const [type, setType] = useState<Investment["type"]>("stock")
+  const [quantity, setQuantity] = useState("")
   const [averageBuyPrice, setAverageBuyPrice] = useState("")
   const [currentPrice, setCurrentPrice] = useState("")
   const [color, setColor] = useState("#10b981")
