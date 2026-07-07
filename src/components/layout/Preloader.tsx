@@ -1,6 +1,6 @@
 import { useState, useEffect } from 'react'
 import { motion, AnimatePresence, useMotionValue, useTransform, animate } from 'framer-motion'
-import finoraLogo from '@/assets/Finora Icon.png'
+import finoraLogo from '@/assets/finora-icon.png'
 
 export function Preloader({ children }: { children: React.ReactNode }) {
   const [isLoading, setIsLoading] = useState(() => {

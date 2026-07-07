@@ -11,7 +11,8 @@ export default defineConfig({
       registerType: 'autoUpdate',
       workbox: {
         clientsClaim: true,
-        skipWaiting: true
+        skipWaiting: true,
+        globPatterns: ['**/*.{js,css,html,ico,png,svg,webp,webmanifest}']
       },
       devOptions: {
         enabled: true
