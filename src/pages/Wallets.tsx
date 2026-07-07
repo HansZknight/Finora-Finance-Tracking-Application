@@ -1,5 +1,6 @@
 import { useState, useMemo } from "react"
-import { Plus, Wallet as WalletIcon, CreditCard, Banknote, Landmark } from "lucide-react"
+import { Plus, Wallet as WalletIcon, CreditCard, Banknote, Landmark, Crown } from "lucide-react"
+import { toast } from "sonner"
 import { motion, AnimatePresence } from "framer-motion"
 
 import { useFinance } from "@/store/FinanceContext"
@@ -21,7 +22,7 @@ const getTypeIcon = (type: Wallet["type"]) => {
 }
 
 export function Wallets() {
-  const { wallets, transactions, currency, convertCurrency } = useFinance()
+  const { wallets, transactions, currency, convertCurrency, isPro } = useFinance()
   const [isModalOpen, setIsModalOpen] = useState(false)
   const [selectedWallet, setSelectedWallet] = useState<Wallet | null>(null)
 
@@ -61,6 +62,10 @@ export function Wallets() {
   }, [walletBalances, wallets, currency, convertCurrency])
 
   const handleAdd = () => {
+    if (!isPro && wallets.length >= 2) {
+      toast.error("Free plan is limited to 2 wallets. Upgrade to PRO for unlimited wallets.")
+      return
+    }
     setSelectedWallet(null)
     setIsModalOpen(true)
   }
@@ -83,7 +88,7 @@ export function Wallets() {
             </p>
           </div>
           <Button onClick={handleAdd} className="bg-gradient-to-r from-primary to-primary/80 hover:from-primary/90 hover:to-primary/70 shadow-lg hover:shadow-primary/25 transition-all duration-300">
-            <Plus className="mr-2 h-4 w-4" /> Add Wallet
+            <Plus className="mr-2 h-4 w-4" /> Add Wallet {!isPro && wallets.length >= 2 && <Crown className="w-3 h-3 ml-2 text-amber-300" />}
           </Button>
         </div>
         <div className="absolute right-0 top-0 -mt-16 -mr-16 h-64 w-64 rounded-full bg-indigo-500/10 blur-3xl" />

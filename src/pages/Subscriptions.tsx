@@ -1,5 +1,5 @@
 import { useMemo } from "react"
-import { Repeat, Calendar, Flame, Zap } from "lucide-react"
+import { Repeat, Calendar, Flame, Zap, Crown } from "lucide-react"
 import { format, parseISO } from "date-fns"
 import { motion, AnimatePresence } from "framer-motion"
 
@@ -46,7 +46,7 @@ function detectBrand(title: string): { bg: string; glow: string; text: string } 
 }
 
 export function Subscriptions() {
-  const { transactions, categories, currency } = useFinance()
+  const { transactions, categories, currency, isPro } = useFinance()
 
   // Filter only recurring transactions
   const subscriptions = useMemo(() => {
@@ -78,9 +78,22 @@ export function Subscriptions() {
   }
 
   return (
-    <div className="space-y-6 animate-in fade-in slide-in-from-bottom-4 duration-500">
+    <div className="space-y-6 pb-20 md:pb-6 relative animate-in fade-in slide-in-from-bottom-4 duration-500">
+      {!isPro && (
+        <div className="absolute inset-0 z-50 flex items-center justify-center bg-background/60 backdrop-blur-[2px] rounded-xl">
+          <div className="text-center p-8 bg-card border rounded-2xl shadow-2xl max-w-sm mx-4">
+            <div className="w-16 h-16 bg-primary/10 rounded-full flex items-center justify-center mx-auto mb-4">
+              <Crown className="w-8 h-8 text-primary" />
+            </div>
+            <h2 className="text-xl font-bold mb-2">Pro Feature</h2>
+            <p className="text-muted-foreground mb-6">Upgrade to PRO to manage recurring subscriptions like Netflix and Spotify.</p>
+            <Button className="w-full">Upgrade to Pro</Button>
+          </div>
+        </div>
+      )}
+
       {/* Hero Header */}
-      <div className="relative overflow-hidden rounded-2xl bg-gradient-to-br from-orange-500/10 via-background to-background p-8 border border-orange-500/10 shadow-lg">
+      <div className="relative overflow-hidden rounded-2xl bg-gradient-to-br from-fuchsia-500/10 via-background to-background p-8 border border-fuchsia-500/10 shadow-lg">
         <div className="relative z-10 flex flex-col md:flex-row justify-between items-start md:items-center gap-4">
           <div>
             <h1 className="text-4xl sm:text-5xl font-extrabold tracking-tight bg-gradient-to-br from-foreground via-foreground/90 to-foreground/60 bg-clip-text text-transparent pb-2">

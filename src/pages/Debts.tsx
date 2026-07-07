@@ -1,5 +1,5 @@
 import { useState } from "react"
-import { Plus, CreditCard, Calendar, CheckCircle2, TrendingUp, Edit, Trash2, Sparkles } from "lucide-react"
+import { Plus, CreditCard, Calendar, CheckCircle2, TrendingUp, Edit, Trash2, Sparkles, Crown } from "lucide-react"
 import { toast } from "sonner"
 import { format } from "date-fns"
 import { motion, AnimatePresence } from "framer-motion"
@@ -16,7 +16,7 @@ import { DebtModal } from "@/features/debts/components/DebtModal"
 import { DebtPaymentModal } from "@/features/debts/components/DebtPaymentModal"
 
 export function Debts() {
-  const { debts, deleteDebt, currency } = useFinance()
+  const { debts, deleteDebt, currency, isPro } = useFinance()
   const [isDebtModalOpen, setIsDebtModalOpen] = useState(false)
   const [isPaymentModalOpen, setIsPaymentModalOpen] = useState(false)
   const [selectedDebt, setSelectedDebt] = useState<Debt | null>(null)
@@ -49,7 +49,20 @@ export function Debts() {
   const overallProgress = totalDebt > 0 ? (totalPaid / totalDebt) * 100 : 0
 
   return (
-    <div className="space-y-6 animate-in fade-in slide-in-from-bottom-4 duration-500">
+    <div className="space-y-6 pb-20 md:pb-6 relative animate-in fade-in slide-in-from-bottom-4 duration-500">
+      {!isPro && (
+        <div className="absolute inset-0 z-50 flex items-center justify-center bg-background/60 backdrop-blur-[2px] rounded-xl">
+          <div className="text-center p-8 bg-card border rounded-2xl shadow-2xl max-w-sm mx-4">
+            <div className="w-16 h-16 bg-primary/10 rounded-full flex items-center justify-center mx-auto mb-4">
+              <Crown className="w-8 h-8 text-primary" />
+            </div>
+            <h2 className="text-xl font-bold mb-2">Pro Feature</h2>
+            <p className="text-muted-foreground mb-6">Upgrade to PRO to track loans and debts efficiently.</p>
+            <Button className="w-full">Upgrade to Pro</Button>
+          </div>
+        </div>
+      )}
+
       <div className="relative overflow-hidden rounded-2xl bg-gradient-to-br from-destructive/10 via-background to-background p-8 border border-destructive/10 shadow-lg">
         <div className="relative z-10 flex flex-col md:flex-row justify-between items-start md:items-center gap-4">
           <div>

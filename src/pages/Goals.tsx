@@ -1,5 +1,6 @@
 import { useState, useMemo } from "react"
-import { Plus, Target, MoreVertical, Edit2, Trash2, Award } from "lucide-react"
+import { Plus, Target, MoreVertical, Edit2, Trash2, Award, Crown } from "lucide-react"
+import { toast } from "sonner"
 
 import { useFinance } from "@/store/FinanceContext"
 import type { Goal } from "@/types"
@@ -12,7 +13,7 @@ import { GoalModal } from "@/features/goals/components/GoalModal"
 import { DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuTrigger } from "@/components/ui/dropdown-menu"
 
 export function Goals() {
-  const { goals, deleteGoal, currency } = useFinance()
+  const { goals, deleteGoal, currency, isPro } = useFinance()
   const [isModalOpen, setIsModalOpen] = useState(false)
   const [goalToEdit, setGoalToEdit] = useState<Goal | null>(null)
 
@@ -22,6 +23,10 @@ export function Goals() {
   }
 
   const handleAdd = () => {
+    if (!isPro && goals.length >= 1) {
+      toast.error("Free plan is limited to 1 goal. Upgrade to PRO for unlimited goals.")
+      return
+    }
     setGoalToEdit(null)
     setIsModalOpen(true)
   }
@@ -47,7 +52,7 @@ export function Goals() {
           <p className="text-muted-foreground mt-1">Track your progress towards what matters.</p>
         </div>
         <Button onClick={handleAdd} className="shadow-lg shadow-primary/20">
-          <Plus className="mr-2 h-4 w-4" /> Add Goal
+          <Plus className="mr-2 h-4 w-4" /> Add Goal {!isPro && goals.length >= 1 && <Crown className="w-3 h-3 ml-1 text-amber-300" />}
         </Button>
       </div>
 

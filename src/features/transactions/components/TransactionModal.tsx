@@ -32,7 +32,7 @@ import { Button } from "@/components/ui/button"
 
 import { useFinance } from "@/store/FinanceContext"
 import type { Transaction } from "@/types"
-import { Paperclip, X, Loader2, Camera, Sparkles } from "lucide-react"
+import { Paperclip, X, Loader2, Camera, ScanLine } from "lucide-react"
 import { compressImageToBase64 } from "@/lib/utils"
 
 const transactionFormSchema = z.object({
@@ -81,7 +81,7 @@ export function TransactionModal({
   onClose,
   transactionToEdit,
 }: TransactionModalProps) {
-  const { categories, wallets, addTransaction, updateTransaction, currency } = useFinance()
+  const { categories, wallets, addTransaction, updateTransaction, currency, isPro } = useFinance()
 
   const form = useForm<TransactionFormValues>({
     resolver: zodResolver(transactionFormSchema),
@@ -108,6 +108,7 @@ export function TransactionModal({
   const [isCompressing, setIsCompressing] = useState(false)
   const [isScanning, setIsScanning] = useState(false)
   const [scanStatus, setScanStatus] = useState("")
+  const [showScanner, setShowScanner] = useState(false)
 
   const handleScanReceipt = async (e: React.ChangeEvent<HTMLInputElement>) => {
     const file = e.target.files?.[0]
@@ -147,6 +148,7 @@ export function TransactionModal({
       setIsScanning(false)
       setScanStatus("")
       if (e.target) e.target.value = ''
+      setShowScanner(false)
     }
   }
 
@@ -506,58 +508,78 @@ export function TransactionModal({
 
             <div className="space-y-2 border p-4 rounded-md">
               <FormLabel>Attachment / Receipt (Optional)</FormLabel>
-              <div className="flex flex-col sm:flex-row items-start sm:items-center gap-4">
-                <Button 
-                  type="button" 
-                  className="relative overflow-hidden w-full sm:w-auto bg-gradient-to-r from-indigo-500 to-primary text-white shadow-lg shadow-indigo-500/25 border-0 hover:from-indigo-600 hover:to-primary/90"
-                  disabled={isScanning || isCompressing}
-                >
-                  {isScanning ? <Loader2 className="w-4 h-4 mr-2 animate-spin" /> : <Camera className="w-4 h-4 mr-2" />}
-                  {isScanning ? scanStatus : "AI Smart Scan"}
-                  {!isScanning && <Sparkles className="w-3 h-3 ml-2 text-yellow-300" />}
-                  <input 
-                    type="file" 
-                    accept="image/*"
-                    capture="environment"
-                    onChange={handleScanReceipt}
-                    className="absolute inset-0 opacity-0 cursor-pointer"
-                    disabled={isScanning || isCompressing}
-                  />
-                </Button>
-
-                <Button 
-                  type="button" 
-                  variant="outline" 
-                  className="relative overflow-hidden w-full sm:w-auto"
-                  disabled={isScanning || isCompressing}
-                >
-                  {isCompressing ? <Loader2 className="w-4 h-4 mr-2 animate-spin" /> : <Paperclip className="w-4 h-4 mr-2" />}
-                  {isCompressing ? "Processing..." : "Manual Upload"}
-                  <input 
-                    type="file" 
-                    accept="image/*"
-                    onChange={handleFileUpload}
-                    className="absolute inset-0 opacity-0 cursor-pointer"
-                    disabled={isScanning || isCompressing}
-                  />
-                </Button>
+              <div className="flex flex-col gap-4">
+                {showScanner ? (
+                  <div className="flex flex-col items-center justify-center p-6 border-2 border-dashed rounded-lg bg-muted/20">
+                    {isScanning ? (
+                      <div className="flex items-center gap-2">
+                        <Loader2 className="w-6 h-6 animate-spin text-primary" />
+                        <span className="text-sm">{scanStatus}</span>
+                      </div>
+                    ) : (
+                      <div className="relative w-full h-32 flex flex-col items-center justify-center cursor-pointer">
+                        <Camera className="w-8 h-8 text-muted-foreground mb-2" />
+                        <span className="text-sm text-muted-foreground">Tap to scan receipt</span>
+                        <input 
+                          type="file" 
+                          accept="image/*"
+                          capture="environment"
+                          onChange={handleScanReceipt}
+                          className="absolute inset-0 opacity-0 cursor-pointer"
+                        />
+                      </div>
+                    )}
+                  </div>
+                ) : (
+                  <div className="flex gap-2">
+                    <Button 
+                      type="button" 
+                      variant="outline" 
+                      className={`flex-1 ${!isPro ? 'opacity-70 bg-amber-500/5 border-amber-500/20' : ''}`}
+                      onClick={() => {
+                        if (!isPro) {
+                          toast.error("✨ AI Smart Scan is a PRO feature. Please upgrade to unlock.")
+                          return
+                        }
+                        setShowScanner(true)
+                      }}
+                    >
+                      <ScanLine className={`w-4 h-4 mr-2 ${isPro ? '' : 'text-amber-500'}`} />
+                      {isPro ? "AI Smart Scan" : <span className="flex items-center gap-1 text-amber-600">AI Smart Scan <span className="text-[9px] bg-amber-500/20 text-amber-600 px-1 rounded uppercase font-bold">Pro</span></span>}
+                    </Button>
+                    <Button 
+                      type="button" 
+                      variant="outline" 
+                      className="relative overflow-hidden flex-1"
+                      disabled={isCompressing}
+                    >
+                      {isCompressing ? <Loader2 className="w-4 h-4 mr-2 animate-spin" /> : <Paperclip className="w-4 h-4 mr-2" />}
+                      {isCompressing ? "Processing..." : "Manual Upload"}
+                      <input 
+                        type="file" 
+                        accept="image/*"
+                        onChange={handleFileUpload}
+                        className="absolute inset-0 opacity-0 cursor-pointer"
+                      />
+                    </Button>
+                  </div>
+                )}
                 
                 {currentReceipt && (
-                  <div className="relative w-12 h-12 rounded-md overflow-hidden border shadow-sm group">
-                    <img src={currentReceipt} alt="Receipt preview" className="w-full h-full object-cover" />
-                    <button 
-                      type="button"
-                      onClick={() => form.setValue("receipt", "")}
-                      className="absolute inset-0 bg-black/50 text-white flex items-center justify-center opacity-0 group-hover:opacity-100 transition-opacity"
-                    >
-                      <X className="w-4 h-4" />
-                    </button>
+                  <div className="flex justify-center pt-2">
+                    <div className="relative w-16 h-16 rounded-md overflow-hidden border shadow-sm group">
+                      <img src={currentReceipt} alt="Receipt preview" className="w-full h-full object-cover" />
+                      <button 
+                        type="button"
+                        onClick={() => form.setValue("receipt", "")}
+                        className="absolute inset-0 bg-black/50 text-white flex items-center justify-center opacity-0 group-hover:opacity-100 transition-opacity"
+                      >
+                        <X className="w-4 h-4" />
+                      </button>
+                    </div>
                   </div>
                 )}
               </div>
-              <p className="text-[10px] text-muted-foreground">
-                Image will be automatically resized and compressed to save storage space.
-              </p>
             </div>
 
             <div className="grid grid-cols-2 gap-4 items-end">
@@ -575,7 +597,7 @@ export function TransactionModal({
                       />
                     </FormControl>
                     <FormLabel className="font-normal cursor-pointer">
-                      Recurring Transaction
+                      Recurring
                     </FormLabel>
                   </FormItem>
                 )}

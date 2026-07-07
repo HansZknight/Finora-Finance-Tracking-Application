@@ -1,7 +1,7 @@
 import { useState, useMemo } from "react"
 import { motion, AnimatePresence } from "framer-motion"
 import { formatDistanceToNow, parseISO } from "date-fns"
-import { Plus, TrendingUp, TrendingDown, RefreshCcw, Landmark, Bitcoin, CircleDollarSign, PieChart as PieChartIcon } from "lucide-react"
+import { Plus, TrendingUp, TrendingDown, RefreshCcw, Landmark, Bitcoin, CircleDollarSign, PieChart as PieChartIcon, Crown } from "lucide-react"
 
 import { useFinance } from "@/store/FinanceContext"
 import type { Investment } from "@/types"
@@ -23,7 +23,7 @@ const getTypeIcon = (type: Investment["type"]) => {
 }
 
 export function Investments() {
-  const { investments, currency } = useFinance()
+  const { investments, currency, isPro } = useFinance()
   const [isInvestModalOpen, setIsInvestModalOpen] = useState(false)
   const [isUpdatePriceOpen, setIsUpdatePriceOpen] = useState(false)
   const [selectedInvestment, setSelectedInvestment] = useState<Investment | null>(null)
@@ -68,7 +68,20 @@ export function Investments() {
   const isProfitGlobally = totalProfit >= 0
 
   return (
-    <div className="space-y-6 animate-in fade-in slide-in-from-bottom-4 duration-500">
+    <div className="space-y-6 animate-in fade-in slide-in-from-bottom-4 duration-500 relative">
+      {!isPro && (
+        <div className="absolute inset-0 z-50 flex items-center justify-center bg-background/60 backdrop-blur-[2px] rounded-xl">
+          <div className="text-center p-8 bg-card border rounded-2xl shadow-2xl max-w-sm mx-4">
+            <div className="w-16 h-16 bg-primary/10 rounded-full flex items-center justify-center mx-auto mb-4">
+              <Crown className="w-8 h-8 text-primary" />
+            </div>
+            <h2 className="text-xl font-bold mb-2">Pro Feature</h2>
+            <p className="text-muted-foreground mb-6">Upgrade to PRO to unlock powerful Investment tracking features.</p>
+            <Button className="w-full">Upgrade to Pro</Button>
+          </div>
+        </div>
+      )}
+
       <div className="relative overflow-hidden rounded-2xl bg-gradient-to-br from-indigo-500/10 via-background to-background p-8 border border-indigo-500/10 shadow-lg">
         <div className="relative z-10 flex flex-col md:flex-row justify-between items-start md:items-center gap-4">
           <div>

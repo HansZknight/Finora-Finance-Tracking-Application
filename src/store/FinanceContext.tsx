@@ -40,6 +40,7 @@ interface FinanceContextType extends AppState {
   setCurrency: (currency: AppState['currency']) => void
   enableBiometric: (credentialId: string) => void
   disableBiometric: () => void
+  activatePro: (key: string) => boolean
 }
 
 const defaultState: AppState = {
@@ -54,6 +55,8 @@ const defaultState: AppState = {
   currency: 'IDR',
   isBiometricEnabled: false,
   biometricCredentialId: null,
+  isPro: false,
+  licenseKey: undefined,
 }
 
 const FinanceContext = createContext<FinanceContextType | undefined>(undefined)
@@ -383,6 +386,14 @@ export function FinanceProvider({ children }: { children: React.ReactNode }) {
     setState(s => ({ ...s, isBiometricEnabled: false, biometricCredentialId: null }))
   }, [])
 
+  const activatePro = useCallback((key: string) => {
+    if (key.trim() === 'FINORA-PRO-LIFETIME') {
+      setState(s => ({ ...s, isPro: true, licenseKey: key }))
+      return true
+    }
+    return false
+  }, [])
+
   return (
     <FinanceContext.Provider value={{
       ...state,
@@ -411,6 +422,7 @@ export function FinanceProvider({ children }: { children: React.ReactNode }) {
       setCurrency,
       enableBiometric,
       disableBiometric,
+      activatePro,
       exchangeRates,
       convertCurrency
     }}>

@@ -1,5 +1,5 @@
 import { useState } from "react"
-import { Download, Upload, Trash2, AlertTriangle, Moon, Sun, Monitor, Lock, Fingerprint } from "lucide-react"
+import { Download, Upload, Trash2, AlertTriangle, Moon, Sun, Monitor, Lock, Fingerprint, Key, Crown } from "lucide-react"
 import { toast } from "sonner"
 import { registerBiometric } from "@/lib/webauthn"
 
@@ -27,9 +27,10 @@ import { useTranslation } from "react-i18next"
 
 export function Settings() {
   const { t, i18n } = useTranslation()
-  const { theme, setTheme, currency, setCurrency, isBiometricEnabled, enableBiometric, disableBiometric } = useFinance()
+  const { theme, setTheme, currency, setCurrency, isBiometricEnabled, enableBiometric, disableBiometric, isPro, activatePro } = useFinance()
   const [importStatus, setImportStatus] = useState<"idle" | "success" | "error">("idle")
   const [isRegisteringBiometric, setIsRegisteringBiometric] = useState(false)
+  const [licenseInput, setLicenseInput] = useState("")
 
   const handleExportJSON = () => {
     const data = localStorage.getItem(STORAGE_KEY)
@@ -79,6 +80,11 @@ export function Settings() {
   }
 
   const toggleBiometric = async () => {
+    if (!isPro) {
+      toast.error("Biometric Vault is a PRO feature. Please upgrade to use this.")
+      return
+    }
+
     if (isBiometricEnabled) {
       disableBiometric()
       toast.success("Biometric lock disabled")
@@ -200,6 +206,58 @@ export function Settings() {
 
         {/* Right Column: Data Management */}
         <div className="space-y-6">
+
+          {/* PRO Activation Card */}
+          <Card className={`relative overflow-hidden ${isPro ? 'border-amber-500/30 bg-gradient-to-br from-amber-500/10 to-orange-500/5' : 'border-border'}`}>
+            {isPro && (
+              <div className="absolute top-0 right-0 p-4">
+                <Crown className="w-8 h-8 text-amber-500 opacity-20" />
+              </div>
+            )}
+            <CardHeader>
+              <CardTitle className="flex items-center gap-2">
+                <Key className={`w-5 h-5 ${isPro ? 'text-amber-500' : 'text-primary'}`} /> 
+                Finora PRO License
+              </CardTitle>
+              <CardDescription>
+                {isPro ? "Thank you for supporting Finora! All premium features are unlocked." : "Enter your Master Key to unlock AI Scanner, Biometric Vault, and Unlimited Tracking."}
+              </CardDescription>
+            </CardHeader>
+            <CardContent>
+              {isPro ? (
+                <div className="flex items-center gap-3 p-4 bg-amber-500/10 border border-amber-500/20 rounded-lg">
+                  <Crown className="w-5 h-5 text-amber-500" />
+                  <div>
+                    <p className="font-semibold text-amber-500">PRO Activated</p>
+                    <p className="text-xs text-amber-500/80">Lifetime License Active</p>
+                  </div>
+                </div>
+              ) : (
+                <div className="flex gap-2">
+                  <input
+                    type="password"
+                    placeholder="Enter Product Key..."
+                    value={licenseInput}
+                    onChange={(e) => setLicenseInput(e.target.value)}
+                    className="flex-1 bg-background border border-input rounded-md px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-ring focus:ring-offset-2"
+                  />
+                  <Button 
+                    onClick={() => {
+                      if (activatePro(licenseInput)) {
+                        toast.success("Finora PRO Activated Successfully! 👑")
+                        setLicenseInput("")
+                      } else {
+                        toast.error("Invalid Product Key.")
+                      }
+                    }}
+                  >
+                    Activate
+                  </Button>
+                </div>
+              )}
+            </CardContent>
+          </Card>
+
           <Card>
             <CardHeader>
               <CardTitle>Data Management</CardTitle>
@@ -293,13 +351,16 @@ export function Settings() {
               </CardDescription>
             </CardHeader>
             <CardContent>
-              <div className="flex items-center justify-between p-4 bg-background rounded-lg border shadow-sm">
+              <div className={`flex items-center justify-between p-4 bg-background rounded-lg border shadow-sm ${!isPro && 'opacity-60 grayscale'}`}>
                 <div className="flex items-center gap-3">
                   <div className={`p-2 rounded-full ${isBiometricEnabled ? 'bg-indigo-500/10 text-indigo-500' : 'bg-muted text-muted-foreground'}`}>
                     <Fingerprint className="w-5 h-5" />
                   </div>
                   <div>
-                    <p className="font-medium">Biometric Lock</p>
+                    <p className="font-medium flex items-center gap-2">
+                      Biometric Lock 
+                      {!isPro && <span className="text-[10px] uppercase font-bold bg-amber-500/20 text-amber-500 px-1.5 py-0.5 rounded">PRO</span>}
+                    </p>
                     <p className="text-xs text-muted-foreground">
                       {isBiometricEnabled ? "Enabled. App requires authentication to open." : "Disabled"}
                     </p>

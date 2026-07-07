@@ -3,10 +3,11 @@ import { useFinance } from "@/store/FinanceContext"
 import { formatCurrency } from "@/lib/utils"
 import { Card, CardContent, CardHeader, CardTitle, CardDescription } from "@/components/ui/card"
 import { Area, AreaChart, CartesianGrid, ResponsiveContainer, Tooltip, XAxis, YAxis } from "recharts"
-import { TrendingUp, TrendingDown, Info, Wallet } from "lucide-react"
+import { TrendingUp, TrendingDown, Info, Wallet, Crown } from "lucide-react"
+import { Button } from "@/components/ui/button"
 
 export function Projections() {
-  const { transactions, debts, currency } = useFinance()
+  const { transactions, debts, currency, isPro } = useFinance()
 
   const [expenseModifier, setExpenseModifier] = useState(0) // percentage
   const [incomeModifier, setIncomeModifier] = useState(0) // percentage
@@ -161,7 +162,20 @@ export function Projections() {
   }
 
   return (
-    <div className="space-y-6 animate-in fade-in slide-in-from-bottom-4 duration-500">
+    <div className="space-y-6 animate-in fade-in slide-in-from-bottom-4 duration-500 relative">
+      {!isPro && (
+        <div className="absolute inset-0 z-50 flex items-center justify-center bg-background/60 backdrop-blur-[2px] rounded-xl">
+          <div className="text-center p-8 bg-card border rounded-2xl shadow-2xl max-w-sm mx-4">
+            <div className="w-16 h-16 bg-primary/10 rounded-full flex items-center justify-center mx-auto mb-4">
+              <Crown className="w-8 h-8 text-primary" />
+            </div>
+            <h2 className="text-xl font-bold mb-2">Pro Feature</h2>
+            <p className="text-muted-foreground mb-6">Upgrade to PRO to unlock powerful AI cashflow projections and financial forecasting tools.</p>
+            <Button className="w-full">Upgrade to Pro</Button>
+          </div>
+        </div>
+      )}
+
       <div>
         <h1 className="text-3xl font-bold tracking-tight bg-clip-text text-transparent bg-gradient-to-r from-primary to-indigo-500">Cashflow Projections</h1>
         <p className="text-muted-foreground mt-1">Predict your financial future based on current recurring habits.</p>
