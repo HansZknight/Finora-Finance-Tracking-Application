@@ -1,11 +1,12 @@
 import React from 'react'
 import { Outlet, NavLink } from 'react-router-dom'
-import { LayoutDashboard, Receipt, PieChart, Target, Settings, Menu, Tags, Repeat, CreditCard, LineChart, Wallet, TrendingUp, X } from 'lucide-react'
+import { LayoutDashboard, Receipt, PieChart, Target, Settings, Menu, Tags, Repeat, CreditCard, LineChart, Wallet, TrendingUp, X, Download } from 'lucide-react'
 import { cn } from '@/lib/utils'
 import { useTranslation } from 'react-i18next'
 import { motion, AnimatePresence } from 'framer-motion'
 
 import { CommandPalette } from '@/components/CommandPalette'
+import { usePWAInstall } from '@/hooks/usePWAInstall'
 
 const sidebarNavItems = [
   {
@@ -68,6 +69,7 @@ const sidebarNavItems = [
 export function AppLayout() {
   const { t } = useTranslation()
   const [isMobileMenuOpen, setIsMobileMenuOpen] = React.useState(false)
+  const { isInstallable, promptInstall } = usePWAInstall()
 
   // Trigger Cmd+K programmatically
   const triggerCommandPalette = () => {
@@ -126,6 +128,18 @@ export function AppLayout() {
             </NavLink>
           ))}
         </nav>
+
+        {isInstallable && (
+          <div className="mt-auto pt-4 px-2">
+            <button
+              onClick={promptInstall}
+              className="flex w-full items-center justify-center gap-2 rounded-xl bg-gradient-to-r from-indigo-500 to-primary px-4 py-3 text-sm font-bold text-white shadow-lg hover:shadow-primary/25 transition-all duration-300 hover:scale-[1.02] active:scale-[0.98]"
+            >
+              <Download className="h-4 w-4" />
+              Install App
+            </button>
+          </div>
+        )}
       </aside>
 
       {/* Main Content Area */}
@@ -196,6 +210,23 @@ export function AppLayout() {
                   </NavLink>
                 </motion.div>
               ))}
+              
+              {isInstallable && (
+                <motion.div
+                  initial={{ x: -20, opacity: 0 }}
+                  animate={{ x: 0, opacity: 1 }}
+                  transition={{ delay: sidebarNavItems.length * 0.03, duration: 0.2 }}
+                  className="mt-4 pt-4 border-t"
+                >
+                  <button
+                    onClick={promptInstall}
+                    className="flex w-full items-center justify-center gap-2 rounded-xl bg-gradient-to-r from-indigo-500 to-primary px-4 py-3 text-sm font-bold text-white shadow-lg transition-all duration-300 active:scale-[0.98]"
+                  >
+                    <Download className="h-4 w-4" />
+                    Install App
+                  </button>
+                </motion.div>
+              )}
             </motion.nav>
           )}
         </AnimatePresence>
