@@ -99,5 +99,7 @@ export const AppStateSchema = z.object({
   investments: z.array(InvestmentSchema).default([]),
   theme: z.enum(["light", "dark", "system"]),
   currency: z.enum(["USD", "EUR", "GBP", "IDR", "SGD", "JPY", "AUD"]).default("IDR"),
+  isBiometricEnabled: z.boolean().default(false).optional(),
+  biometricCredentialId: z.string().nullable().default(null).optional(),
 })
 export type AppState = z.infer<typeof AppStateSchema>

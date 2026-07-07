@@ -1,5 +1,7 @@
 import { useState } from "react"
-import { Download, Upload, Trash2, AlertTriangle, Moon, Sun, Monitor } from "lucide-react"
+import { Download, Upload, Trash2, AlertTriangle, Moon, Sun, Monitor, Lock, Fingerprint } from "lucide-react"
+import { toast } from "sonner"
+import { registerBiometric } from "@/lib/webauthn"
 
 
 import { useFinance } from "@/store/FinanceContext"
@@ -25,8 +27,9 @@ import { useTranslation } from "react-i18next"
 
 export function Settings() {
   const { t, i18n } = useTranslation()
-  const { theme, setTheme, currency, setCurrency } = useFinance()
+  const { theme, setTheme, currency, setCurrency, isBiometricEnabled, enableBiometric, disableBiometric } = useFinance()
   const [importStatus, setImportStatus] = useState<"idle" | "success" | "error">("idle")
+  const [isRegisteringBiometric, setIsRegisteringBiometric] = useState(false)
 
   const handleExportJSON = () => {
     const data = localStorage.getItem(STORAGE_KEY)
@@ -73,6 +76,25 @@ export function Settings() {
   const handleClearData = () => {
     localStorage.removeItem(STORAGE_KEY)
     window.location.reload()
+  }
+
+  const toggleBiometric = async () => {
+    if (isBiometricEnabled) {
+      disableBiometric()
+      toast.success("Biometric lock disabled")
+      return
+    }
+
+    try {
+      setIsRegisteringBiometric(true)
+      const credentialId = await registerBiometric()
+      enableBiometric(credentialId)
+      toast.success("Biometric lock enabled! Your app is now secured.")
+    } catch (error: any) {
+      toast.error(error.message || "Failed to setup biometric lock.")
+    } finally {
+      setIsRegisteringBiometric(false)
+    }
   }
 
   return (
@@ -258,6 +280,46 @@ export function Settings() {
                   </AlertDialogFooter>
                 </AlertDialogContent>
               </AlertDialog>
+            </CardContent>
+          </Card>
+
+          <Card className="border-indigo-500/30 bg-gradient-to-br from-indigo-500/5 to-primary/5">
+            <CardHeader>
+              <CardTitle className="flex items-center gap-2 text-indigo-500">
+                <Lock className="w-5 h-5" /> Security Vault
+              </CardTitle>
+              <CardDescription>
+                Lock your offline data with your device's native FaceID, TouchID, or PIN.
+              </CardDescription>
+            </CardHeader>
+            <CardContent>
+              <div className="flex items-center justify-between p-4 bg-background rounded-lg border shadow-sm">
+                <div className="flex items-center gap-3">
+                  <div className={`p-2 rounded-full ${isBiometricEnabled ? 'bg-indigo-500/10 text-indigo-500' : 'bg-muted text-muted-foreground'}`}>
+                    <Fingerprint className="w-5 h-5" />
+                  </div>
+                  <div>
+                    <p className="font-medium">Biometric Lock</p>
+                    <p className="text-xs text-muted-foreground">
+                      {isBiometricEnabled ? "Enabled. App requires authentication to open." : "Disabled"}
+                    </p>
+                  </div>
+                </div>
+                
+                <label className="relative inline-flex items-center cursor-pointer">
+                  <input 
+                    type="checkbox" 
+                    className="sr-only peer" 
+                    checked={isBiometricEnabled || false}
+                    onChange={toggleBiometric}
+                    disabled={isRegisteringBiometric}
+                  />
+                  <div className="w-11 h-6 bg-muted peer-focus:outline-none peer-focus:ring-4 peer-focus:ring-indigo-500/30 rounded-full peer peer-checked:after:translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-[2px] after:left-[2px] after:bg-white after:border-gray-300 after:border after:rounded-full after:h-5 after:w-5 after:transition-all peer-checked:bg-indigo-500"></div>
+                </label>
+              </div>
+              <p className="text-xs text-muted-foreground mt-3 leading-relaxed">
+                <strong className="text-foreground">Note:</strong> Because this app is 100% offline, this security key is tied to this specific device. If you clear your browser data, the lock will safely reset.
+              </p>
             </CardContent>
           </Card>
         </div>

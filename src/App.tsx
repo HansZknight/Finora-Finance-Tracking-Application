@@ -13,6 +13,7 @@ import { Wallets } from '@/pages/Wallets'
 import { Investments } from '@/pages/Investments'
 import { FinanceProvider } from '@/store/FinanceContext'
 import { Preloader } from '@/components/layout/Preloader'
+import { BiometricLockScreen } from '@/components/auth/BiometricLockScreen'
 
 import { Toaster } from 'sonner'
 
@@ -20,26 +21,28 @@ function App() {
   return (
     <FinanceProvider>
       <Preloader>
-        <BrowserRouter>
-          <Routes>
-            <Route element={<AppLayout />}>
-              <Route path="/" element={<Dashboard />} />
-              <Route path="/projections" element={<Projections />} />
-              <Route path="/transactions" element={<Transactions />} />
-              <Route path="/wallets" element={<Wallets />} />
-              <Route path="/investments" element={<Investments />} />
-              <Route path="/categories" element={<Categories />} />
-              <Route path="/goals" element={<Goals />} />
-              <Route path="/budget" element={<Budget />} />
-              <Route path="/debts" element={<Debts />} />
-              <Route path="/subscriptions" element={<Subscriptions />} />
-              <Route path="/settings" element={<Settings />} />
-              {/* Add more routes here as we build them */}
-              <Route path="*" element={<div className="p-8">Page not found</div>} />
-            </Route>
-          </Routes>
-        </BrowserRouter>
-        <Toaster position="bottom-right" richColors theme="system" />
+        <BiometricLockScreen>
+          <BrowserRouter>
+            <Routes>
+              <Route element={<AppLayout />}>
+                <Route path="/" element={<Dashboard />} />
+                <Route path="/projections" element={<Projections />} />
+                <Route path="/transactions" element={<Transactions />} />
+                <Route path="/wallets" element={<Wallets />} />
+                <Route path="/investments" element={<Investments />} />
+                <Route path="/categories" element={<Categories />} />
+                <Route path="/goals" element={<Goals />} />
+                <Route path="/budget" element={<Budget />} />
+                <Route path="/debts" element={<Debts />} />
+                <Route path="/subscriptions" element={<Subscriptions />} />
+                <Route path="/settings" element={<Settings />} />
+                {/* Add more routes here as we build them */}
+                <Route path="*" element={<div className="p-8">Page not found</div>} />
+              </Route>
+            </Routes>
+          </BrowserRouter>
+          <Toaster position="bottom-right" richColors theme="system" />
+        </BiometricLockScreen>
       </Preloader>
     </FinanceProvider>
   )
