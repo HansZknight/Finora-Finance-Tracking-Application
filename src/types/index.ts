@@ -44,6 +44,9 @@ export const TransactionSchema = z.object({
   recurringFrequency: RecurringFrequencySchema.optional(),
   nextRecurringDate: z.string().optional(),
   receipt: z.string().optional(), // Base64 image
+  splitWith: z.string().optional(), // Contact ID
+  splitAmount: z.number().optional(), // Amount the contact owes you
+  tripId: z.string().optional(), // If this transaction belongs to a trip
 })
 export type Transaction = z.infer<typeof TransactionSchema>
 
@@ -88,6 +91,24 @@ export const InvestmentSchema = z.object({
 })
 export type Investment = z.infer<typeof InvestmentSchema>
 
+export const ContactSchema = z.object({
+  id: z.string(),
+  name: z.string().min(1, "Name is required"),
+  email: z.string().email().optional().or(z.literal('')),
+  avatar: z.string().optional(),
+})
+export type Contact = z.infer<typeof ContactSchema>
+
+export const TripSchema = z.object({
+  id: z.string(),
+  name: z.string().min(1, "Name is required"),
+  startDate: z.string(), // ISO
+  endDate: z.string(), // ISO
+  budget: z.number().positive(),
+  currency: z.string().default("USD"),
+})
+export type Trip = z.infer<typeof TripSchema>
+
 // Application State Schema for Local Storage
 export const AppStateSchema = z.object({
   wallets: z.array(WalletSchema).default([]),
@@ -97,6 +118,9 @@ export const AppStateSchema = z.object({
   budgets: z.array(BudgetSchema),
   debts: z.array(DebtSchema).default([]),
   investments: z.array(InvestmentSchema).default([]),
+  contacts: z.array(ContactSchema).default([]),
+  trips: z.array(TripSchema).default([]),
+  activeTripId: z.string().nullable().default(null).optional(),
   theme: z.enum(["light", "dark", "system"]),
   currency: z.enum(["USD", "EUR", "GBP", "IDR", "SGD", "JPY", "AUD"]).default("IDR"),
   isBiometricEnabled: z.boolean().default(false).optional(),

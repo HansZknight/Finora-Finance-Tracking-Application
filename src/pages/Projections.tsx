@@ -6,6 +6,7 @@ import { Area, AreaChart, CartesianGrid, ResponsiveContainer, Tooltip, XAxis, YA
 import { TrendingUp, TrendingDown, Info, Wallet, Crown, BrainCircuit, Lightbulb, PieChart, ShieldAlert, Calculator } from "lucide-react"
 import { Button } from "@/components/ui/button"
 import { Progress } from "@/components/ui/progress"
+import { FIRESimulator } from "@/features/projections/components/FIRESimulator"
 
 export function Projections() {
   const { transactions, debts, wallets, categories, currency, isPro, convertCurrency } = useFinance()
@@ -651,6 +652,9 @@ export function Projections() {
             </CardContent>
           </Card>
         </div>
+        
+        {/* FIRE Simulator Section */}
+        <FIRESimulator />
       </div>
     </div>
   )

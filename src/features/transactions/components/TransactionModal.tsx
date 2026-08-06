@@ -29,6 +29,7 @@ import {
 } from "@/components/ui/select"
 import { Input } from "@/components/ui/input"
 import { Button } from "@/components/ui/button"
+import { Label } from "@/components/ui/label"
 
 import { useFinance } from "@/store/FinanceContext"
 import type { Transaction } from "@/types"
@@ -48,6 +49,8 @@ const transactionFormSchema = z.object({
   isRecurring: z.boolean().optional(),
   recurringFrequency: z.enum(["daily", "weekly", "monthly"]).optional(),
   receipt: z.string().optional(),
+  splitWith: z.string().optional(),
+  splitAmount: z.number().optional(),
 }).refine((data) => {
   if (data.type !== "transfer" && !data.categoryId) return false
   return true
@@ -81,7 +84,7 @@ export function TransactionModal({
   onClose,
   transactionToEdit,
 }: TransactionModalProps) {
-  const { categories, wallets, addTransaction, updateTransaction, currency, isPro } = useFinance()
+  const { categories, wallets, addTransaction, updateTransaction, currency, isPro, contacts } = useFinance()
 
   const form = useForm<TransactionFormValues>({
     resolver: zodResolver(transactionFormSchema),
@@ -97,9 +100,12 @@ export function TransactionModal({
       tags: [],
       isRecurring: false,
       recurringFrequency: "monthly",
+      splitWith: "",
+      splitAmount: undefined,
     },
   })
 
+  const { activeTripId } = useFinance()
   const currentType = form.watch("type")
   const currentReceipt = form.watch("receipt")
   const currentWalletId = form.watch("walletId")
@@ -187,12 +193,13 @@ export function TransactionModal({
           walletId: transactionToEdit.walletId,
           toWalletId: transactionToEdit.toWalletId || "",
           date: transactionToEdit.date.split("T")[0],
-          type: transactionToEdit.type,
           notes: transactionToEdit.notes || "",
           tags: transactionToEdit.tags || [],
           isRecurring: transactionToEdit.isRecurring || false,
           recurringFrequency: transactionToEdit.recurringFrequency || "monthly",
           receipt: transactionToEdit.receipt || "",
+          splitWith: transactionToEdit.splitWith || "",
+          splitAmount: transactionToEdit.splitAmount || undefined
         })
       } else {
         form.reset({
@@ -207,6 +214,8 @@ export function TransactionModal({
           tags: [],
           isRecurring: false,
           recurringFrequency: "monthly",
+          splitWith: "",
+          splitAmount: undefined,
           receipt: "",
         })
       }
@@ -228,6 +237,9 @@ export function TransactionModal({
       isRecurring: data.isRecurring || false,
       recurringFrequency: data.isRecurring ? data.recurringFrequency : undefined,
       receipt: data.receipt,
+      splitWith: data.splitWith || undefined,
+      splitAmount: data.splitAmount || undefined,
+      tripId: transactionToEdit ? transactionToEdit.tripId : (activeTripId || undefined),
     }
 
     if (data.isRecurring && !transactionToEdit?.nextRecurringDate) {
@@ -491,6 +503,85 @@ export function TransactionModal({
                 </FormItem>
               )}
             />
+
+            {/* SPLIT BILL SECTION */}
+            {currentType === "expense" && contacts.length > 0 && (
+              <div className="p-4 border rounded-md bg-indigo-500/5 border-indigo-500/20 space-y-4">
+                <div className="flex items-center space-x-3">
+                  <input 
+                    type="checkbox" 
+                    id="enableSplit"
+                    checked={!!form.watch("splitWith")}
+                    onChange={(e) => {
+                      if (e.target.checked && contacts.length > 0) {
+                        form.setValue("splitWith", contacts[0].id)
+                        form.setValue("splitAmount", (form.watch("amount") || 0) / 2)
+                      } else {
+                        form.setValue("splitWith", "")
+                        form.setValue("splitAmount", undefined)
+                      }
+                    }}
+                    className="w-4 h-4 rounded border-gray-300 text-indigo-500 focus:ring-indigo-500"
+                  />
+                  <Label htmlFor="enableSplit" className="font-semibold text-indigo-600 dark:text-indigo-400 cursor-pointer">
+                    Split this expense with a friend
+                  </Label>
+                </div>
+
+                {!!form.watch("splitWith") && (
+                  <div className="grid grid-cols-2 gap-4 animate-in fade-in slide-in-from-top-2 duration-300">
+                    <FormField
+                      control={form.control as any}
+                      name="splitWith"
+                      render={({ field }: any) => (
+                        <FormItem>
+                          <FormLabel>Split With</FormLabel>
+                          <Select onValueChange={field.onChange} defaultValue={field.value || ""}>
+                            <FormControl>
+                              <SelectTrigger>
+                                <SelectValue placeholder="Select friend" />
+                              </SelectTrigger>
+                            </FormControl>
+                            <SelectContent>
+                              {contacts.map((c) => (
+                                <SelectItem key={c.id} value={c.id}>{c.name}</SelectItem>
+                              ))}
+                            </SelectContent>
+                          </Select>
+                          <FormMessage />
+                        </FormItem>
+                      )}
+                    />
+
+                    <FormField
+                      control={form.control as any}
+                      name="splitAmount"
+                      render={({ field }) => (
+                        <FormItem>
+                          <FormLabel>They Owe You</FormLabel>
+                          <FormControl>
+                            <div className="relative">
+                              <span className="absolute left-3 top-1/2 -translate-y-1/2 text-muted-foreground text-sm">
+                                {currentWalletCurrency}
+                              </span>
+                              <Input 
+                                type="number" 
+                                placeholder="0" 
+                                className="pl-12"
+                                {...field} 
+                                value={field.value || ""}
+                                onChange={e => field.onChange(parseFloat(e.target.value))} 
+                              />
+                            </div>
+                          </FormControl>
+                          <FormMessage />
+                        </FormItem>
+                      )}
+                    />
+                  </div>
+                )}
+              </div>
+            )}
 
             <FormField
               control={form.control as any}

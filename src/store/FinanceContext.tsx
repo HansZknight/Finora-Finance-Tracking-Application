@@ -1,6 +1,6 @@
 import React, { createContext, useContext, useEffect, useState, useCallback } from 'react'
 import { AppStateSchema } from '@/types'
-import type { AppState, Transaction, Category, Goal, Budget, Debt, Wallet, Investment } from '@/types'
+import type { AppState, Transaction, Category, Goal, Budget, Debt, Wallet, Investment, Contact, Trip } from '@/types'
 import { getItem, setItem, STORAGE_KEY } from '@/services/storage'
 import { DEFAULT_CATEGORIES } from '@/constants/defaults'
 
@@ -36,6 +36,15 @@ interface FinanceContextType extends AppState {
   deleteInvestment: (id: string) => void
   updateInvestmentPrice: (id: string, currentPrice: number) => void
 
+  addContact: (contact: Contact) => void
+  updateContact: (contact: Contact) => void
+  deleteContact: (id: string) => void
+
+  addTrip: (trip: Trip) => void
+  updateTrip: (trip: Trip) => void
+  deleteTrip: (id: string) => void
+  setActiveTripId: (id: string | null) => void
+
   setTheme: (theme: AppState['theme']) => void
   setCurrency: (currency: AppState['currency']) => void
   enableBiometric: (credentialId: string) => void
@@ -51,6 +60,9 @@ const defaultState: AppState = {
   budgets: [],
   debts: [],
   investments: [],
+  contacts: [],
+  trips: [],
+  activeTripId: null,
   theme: 'system',
   currency: 'IDR',
   isBiometricEnabled: false,
@@ -359,16 +371,57 @@ export function FinanceProvider({ children }: { children: React.ReactNode }) {
   }, [])
 
   const updateInvestmentPrice = useCallback((id: string, currentPrice: number) => {
-    setState(s => ({
-      ...s,
-      investments: (s.investments || []).map(item => 
-        item.id === id 
-          ? { ...item, currentPrice, lastUpdated: new Date().toISOString() } 
-          : item
+    setState(prev => ({
+      ...prev,
+      investments: prev.investments.map(inv => 
+        inv.id === id ? { ...inv, currentPrice, lastUpdated: new Date().toISOString() } : inv
       )
     }))
   }, [])
 
+  const addContact = useCallback((contact: Contact) => {
+    setState(prev => ({ ...prev, contacts: [...prev.contacts, contact] }))
+  }, [])
+
+  const updateContact = useCallback((contact: Contact) => {
+    setState(prev => ({
+      ...prev,
+      contacts: prev.contacts.map(c => c.id === contact.id ? contact : c)
+    }))
+  }, [])
+
+  const deleteContact = useCallback((id: string) => {
+    setState(prev => ({
+      ...prev,
+      contacts: prev.contacts.filter(c => c.id !== id),
+      // Also remove splitWith references from transactions
+      transactions: prev.transactions.map(t => t.splitWith === id ? { ...t, splitWith: undefined, splitAmount: undefined } : t)
+    }))
+  }, [])
+
+  const addTrip = useCallback((trip: Trip) => {
+    setState(prev => ({ ...prev, trips: [...(prev.trips || []), trip] }))
+  }, [])
+
+  const updateTrip = useCallback((trip: Trip) => {
+    setState(prev => ({
+      ...prev,
+      trips: (prev.trips || []).map(t => t.id === trip.id ? trip : t)
+    }))
+  }, [])
+
+  const deleteTrip = useCallback((id: string) => {
+    setState(prev => ({
+      ...prev,
+      trips: (prev.trips || []).filter(t => t.id !== id),
+      activeTripId: prev.activeTripId === id ? null : prev.activeTripId,
+      transactions: prev.transactions.map(t => t.tripId === id ? { ...t, tripId: undefined } : t)
+    }))
+  }, [])
+
+  const setActiveTripId = useCallback((id: string | null) => {
+    setState(prev => ({ ...prev, activeTripId: id }))
+  }, [])
 
   const setTheme = useCallback((theme: AppState['theme']) => {
     setState(s => ({ ...s, theme }))
@@ -418,6 +471,13 @@ export function FinanceProvider({ children }: { children: React.ReactNode }) {
       updateInvestment,
       deleteInvestment,
       updateInvestmentPrice,
+      addContact,
+      updateContact,
+      deleteContact,
+      addTrip,
+      updateTrip,
+      deleteTrip,
+      setActiveTripId,
       setTheme,
       setCurrency,
       enableBiometric,

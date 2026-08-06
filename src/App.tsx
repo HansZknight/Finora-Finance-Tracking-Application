@@ -11,6 +11,8 @@ import { Subscriptions } from '@/pages/Subscriptions'
 import { Settings } from '@/pages/Settings'
 import { Wallets } from '@/pages/Wallets'
 import { Investments } from '@/pages/Investments'
+import { Contacts } from '@/pages/Contacts'
+import { Trips } from '@/pages/Trips'
 import { FinanceProvider } from '@/store/FinanceContext'
 import { Preloader } from '@/components/layout/Preloader'
 import { BiometricLockScreen } from '@/components/auth/BiometricLockScreen'
@@ -34,6 +36,8 @@ function App() {
                 <Route path="/goals" element={<Goals />} />
                 <Route path="/budget" element={<Budget />} />
                 <Route path="/debts" element={<Debts />} />
+                <Route path="/contacts" element={<Contacts />} />
+                <Route path="/trips" element={<Trips />} />
                 <Route path="/subscriptions" element={<Subscriptions />} />
                 <Route path="/settings" element={<Settings />} />
                 {/* Add more routes here as we build them */}

@@ -1,12 +1,35 @@
 import React from 'react'
 import { Outlet, NavLink } from 'react-router-dom'
-import { LayoutDashboard, Receipt, PieChart, Target, Settings, Tags, Repeat, CreditCard, LineChart, Wallet, TrendingUp, Download, MoreHorizontal, Plus } from 'lucide-react'
+import { LayoutDashboard, Receipt, PieChart, Target, Settings, Tags, Repeat, CreditCard, LineChart, Wallet, TrendingUp, Download, MoreHorizontal, Plus, Users, Plane } from 'lucide-react'
 import { cn } from '@/lib/utils'
 import { useTranslation } from 'react-i18next'
 import { motion, AnimatePresence } from 'framer-motion'
 
 import { CommandPalette } from '@/components/CommandPalette'
 import { usePWAInstall } from '@/hooks/usePWAInstall'
+import { useFinance } from '@/store/FinanceContext'
+
+function TravelModeBanner() {
+  const { trips, activeTripId, setActiveTripId } = useFinance()
+  const activeTrip = trips?.find(t => t.id === activeTripId)
+
+  if (!activeTrip) return null
+
+  return (
+    <div className="bg-cyan-500 text-white px-4 py-2 flex items-center justify-between text-xs sm:text-sm font-medium sticky top-0 z-50">
+      <div className="flex items-center gap-2">
+        <Plane className="w-4 h-4 animate-pulse" />
+        <span>Travel Mode: <strong>{activeTrip.name}</strong></span>
+      </div>
+      <button 
+        onClick={() => setActiveTripId(null)}
+        className="px-2 py-1 bg-black/20 hover:bg-black/30 rounded-md transition-colors"
+      >
+        Turn Off
+      </button>
+    </div>
+  )
+}
 
 const sidebarNavItems = [
   {
@@ -58,6 +81,16 @@ const sidebarNavItems = [
     titleKey: "nav.goals",
     href: "/goals",
     icon: Target,
+  },
+  {
+    titleKey: "Contacts (Split)",
+    href: "/contacts",
+    icon: Users,
+  },
+  {
+    titleKey: "Travel Mode",
+    href: "/trips",
+    icon: Plane,
   },
   {
     titleKey: "nav.settings",
@@ -126,7 +159,7 @@ export function AppLayout() {
               }
             >
               <item.icon className="h-4 w-4" />
-              {t(item.titleKey)}
+              {item.titleKey.startsWith('nav.') ? t(item.titleKey) : item.titleKey}
             </NavLink>
           ))}
         </nav>
@@ -146,6 +179,10 @@ export function AppLayout() {
 
       {/* Main Content Area */}
       <main className="flex flex-1 flex-col relative z-10 w-full min-w-0 overflow-x-hidden pb-24 sm:pb-0">
+        
+        {/* Travel Mode Banner */}
+        <TravelModeBanner />
+
         {/* Mobile Header (Simplified) */}
         <header className="flex h-16 items-center justify-between border-b bg-card/70 backdrop-blur-md px-4 sm:hidden sticky top-0 z-20">
           <div className="flex items-center gap-3">
@@ -193,7 +230,7 @@ export function AppLayout() {
                     )}
                   </div>
                   <span className={cn("text-[10px] font-medium transition-all", isActive ? "opacity-100" : "opacity-70")}>
-                    {t(item.titleKey)}
+                    {item.titleKey.startsWith('nav.') ? t(item.titleKey) : item.titleKey}
                   </span>
                 </>
               )}

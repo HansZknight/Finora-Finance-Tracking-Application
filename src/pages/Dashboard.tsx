@@ -4,6 +4,7 @@ import { Button } from "@/components/ui/button"
 import { SummaryCards } from "@/features/dashboard/components/SummaryCards"
 const ExpenseChart = React.lazy(() => import("@/features/dashboard/components/ExpenseChart").then(m => ({ default: m.ExpenseChart })))
 const IncomeExpenseChart = React.lazy(() => import("@/features/dashboard/components/IncomeExpenseChart").then(m => ({ default: m.IncomeExpenseChart })))
+import { GamificationHeatmap } from "@/features/dashboard/components/GamificationHeatmap"
 import { RecentTransactions } from "@/features/dashboard/components/RecentTransactions"
 import { SmartInsights } from "@/features/dashboard/components/SmartInsights"
 import { FinancialHealthCard } from "@/features/dashboard/components/FinancialHealthCard"
@@ -42,6 +43,8 @@ export function Dashboard() {
         <div className="hidden sm:block absolute right-0 top-0 -mt-16 -mr-16 h-64 w-64 rounded-full bg-primary/10 blur-3xl" />
         <div className="hidden sm:block absolute bottom-0 left-1/2 h-32 w-64 -translate-x-1/2 rounded-full bg-accent/10 blur-3xl" />
       </div>
+      
+      <GamificationHeatmap />
       
       <SmartInsights />
       <FinancialHealthCard />
