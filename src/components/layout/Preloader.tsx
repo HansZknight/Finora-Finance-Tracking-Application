@@ -146,7 +146,7 @@ export function Preloader({ children }: { children: React.ReactNode }) {
         initial={{ opacity: 0, filter: "blur(10px)" }}
         animate={{ 
           opacity: isLoading ? 0 : 1, 
-          filter: isLoading ? "blur(10px)" : "blur(0px)"
+          filter: isLoading ? "blur(10px)" : "none"
         }}
         transition={{ duration: 0.4, ease: "easeOut", delay: 0 }}
         className={isLoading ? "pointer-events-none" : ""}

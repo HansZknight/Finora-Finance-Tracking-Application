@@ -82,7 +82,7 @@ export function AppLayout() {
   }
 
   return (
-    <div className="flex min-h-screen w-full bg-background relative overflow-hidden">
+    <div className="flex h-[100dvh] w-full bg-background relative overflow-hidden">
       {/* Background Ambient Mesh - Hidden on mobile for performance */}
       <div className="fixed inset-0 z-0 pointer-events-none print:hidden hidden md:block">
         <div className="absolute top-0 left-0 w-[500px] h-[500px] rounded-full bg-primary/10 blur-[120px] -translate-x-1/2 -translate-y-1/2 mix-blend-normal"></div>
