@@ -1,6 +1,6 @@
 import React from 'react'
 import { Outlet, NavLink } from 'react-router-dom'
-import { LayoutDashboard, Receipt, PieChart, Target, Settings, Menu, Tags, Repeat, CreditCard, LineChart, Wallet, TrendingUp, X, Download } from 'lucide-react'
+import { LayoutDashboard, Receipt, PieChart, Target, Settings, Tags, Repeat, CreditCard, LineChart, Wallet, TrendingUp, Download, MoreHorizontal } from 'lucide-react'
 import { cn } from '@/lib/utils'
 import { useTranslation } from 'react-i18next'
 import { motion, AnimatePresence } from 'framer-motion'
@@ -117,6 +117,7 @@ export function AppLayout() {
               key={item.href}
               to={item.href}
               replace={true}
+              onClick={() => {}}
               className={({ isActive }) =>
                 cn(
                   "flex items-center gap-3 rounded-full px-4 py-3 text-sm font-medium transition-all duration-200 hover:text-primary hover:bg-primary/5",
@@ -144,101 +145,153 @@ export function AppLayout() {
       </aside>
 
       {/* Main Content Area */}
-      <main className="flex flex-1 flex-col relative z-10 w-full min-w-0 overflow-x-hidden">
-        {/* Mobile Header */}
+      <main className="flex flex-1 flex-col relative z-10 w-full min-w-0 overflow-x-hidden pb-24 sm:pb-0">
+        {/* Mobile Header (Simplified) */}
         <header className="flex h-16 items-center justify-between border-b bg-card/70 backdrop-blur-md px-4 sm:hidden sticky top-0 z-20">
-          <div className="flex items-center">
-            <button 
-              className="mr-4 w-8 h-8 flex items-center justify-center rounded-full hover:bg-primary/10 transition-colors"
-              onClick={() => setIsMobileMenuOpen(!isMobileMenuOpen)}
-            >
-              <AnimatePresence mode="wait">
-                {isMobileMenuOpen ? (
-                  <motion.div key="close" initial={{ rotate: -90, opacity: 0 }} animate={{ rotate: 0, opacity: 1 }} exit={{ rotate: 90, opacity: 0 }} transition={{ duration: 0.15 }}>
-                    <X className="h-5 w-5" />
-                  </motion.div>
-                ) : (
-                  <motion.div key="menu" initial={{ rotate: 90, opacity: 0 }} animate={{ rotate: 0, opacity: 1 }} exit={{ rotate: -90, opacity: 0 }} transition={{ duration: 0.15 }}>
-                    <Menu className="h-5 w-5" />
-                  </motion.div>
-                )}
-              </AnimatePresence>
-            </button>
-            <div className="flex items-center gap-2">
-              <img src="/favicon.png" alt="Finora" className="h-6 w-6 rounded-md" />
-              <span className="text-lg font-bold">Finora</span>
-            </div>
+          <div className="flex items-center gap-3">
+            <img src="/favicon.png" alt="Finora" className="h-8 w-8 rounded-lg shadow-sm" />
+            <span className="text-xl font-bold bg-gradient-to-br from-foreground to-foreground/70 bg-clip-text text-transparent">Finora</span>
           </div>
           
           <button 
             onClick={triggerCommandPalette}
-            className="p-2 text-muted-foreground hover:bg-muted rounded-full transition-colors"
+            className="p-2.5 bg-muted/50 text-muted-foreground hover:bg-muted rounded-full transition-colors flex items-center justify-center shadow-sm"
             aria-label="Search"
           >
-            <span className="w-5 h-5 flex items-center justify-center">🔍</span>
+            <span className="w-5 h-5 flex items-center justify-center leading-none text-base">🔍</span>
           </button>
         </header>
 
-        {/* Mobile Navigation (Animated) */}
-        <AnimatePresence>
-          {isMobileMenuOpen && (
-            <motion.nav 
-              initial={{ height: 0, opacity: 0 }}
-              animate={{ height: "auto", opacity: 1 }}
-              exit={{ height: 0, opacity: 0 }}
-              transition={{ duration: 0.3, ease: "easeInOut" }}
-              className="flex flex-col gap-2 border-b bg-card p-4 sm:hidden overflow-hidden"
-            >
-               {sidebarNavItems.map((item, index) => (
-                <motion.div
-                  key={item.href}
-                  initial={{ x: -20, opacity: 0 }}
-                  animate={{ x: 0, opacity: 1 }}
-                  transition={{ delay: index * 0.03, duration: 0.2 }}
-                >
-                  <NavLink
-                    to={item.href}
-                    replace={true}
-                    onClick={() => setIsMobileMenuOpen(false)}
-                    className={({ isActive }) =>
-                      cn(
-                        "flex items-center gap-3 rounded-full px-4 py-3 text-sm font-medium transition-all duration-200 active:scale-95",
-                        isActive ? "bg-primary text-primary-foreground shadow-sm" : "text-muted-foreground hover:bg-primary/5"
-                      )
-                    }
-                  >
-                    <item.icon className="h-4 w-4" />
-                    {t(item.titleKey)}
-                  </NavLink>
-                </motion.div>
-              ))}
-              
-              {isInstallable && (
-                <motion.div
-                  initial={{ x: -20, opacity: 0 }}
-                  animate={{ x: 0, opacity: 1 }}
-                  transition={{ delay: sidebarNavItems.length * 0.03, duration: 0.2 }}
-                  className="mt-4 pt-4 border-t"
-                >
-                  <button
-                    onClick={promptInstall}
-                    className="flex w-full items-center justify-center gap-2 rounded-xl bg-gradient-to-r from-indigo-500 to-primary px-4 py-3 text-sm font-bold text-white shadow-lg transition-all duration-300 active:scale-[0.98]"
-                  >
-                    <Download className="h-4 w-4" />
-                    Install App
-                  </button>
-                </motion.div>
-              )}
-            </motion.nav>
-          )}
-        </AnimatePresence>
-
-        <div className="flex-1 p-4 sm:p-8 w-full max-w-full overflow-x-hidden">
-          <div className="mx-auto max-w-6xl w-full h-full min-w-0">
-            <Outlet />
-          </div>
+        {/* Scrollable Content */}
+        <div className="flex-1 overflow-auto p-4 sm:p-6 lg:p-8">
+          <Outlet />
         </div>
       </main>
+
+      {/* --- MOBILE BOTTOM NAVIGATION --- */}
+      <nav className="sm:hidden fixed bottom-0 left-0 right-0 z-50 bg-background/80 backdrop-blur-xl border-t pb-safe shadow-[0_-8px_30px_rgba(0,0,0,0.04)]">
+        <div className="flex justify-around items-center h-16 px-2">
+          {sidebarNavItems.slice(0, 4).map((item) => (
+            <NavLink
+              key={item.href}
+              to={item.href}
+              replace={true}
+              onClick={() => setIsMobileMenuOpen(false)}
+              className={({ isActive }) =>
+                cn(
+                  "flex flex-col items-center justify-center w-full h-full space-y-1 relative group transition-colors",
+                  isActive ? "text-primary" : "text-muted-foreground hover:text-foreground"
+                )
+              }
+            >
+              {({ isActive }) => (
+                <>
+                  <div className="relative">
+                    <item.icon className={cn("w-6 h-6 transition-transform duration-200", isActive && "scale-110")} strokeWidth={isActive ? 2.5 : 2} />
+                    {isActive && (
+                      <motion.div layoutId="nav-indicator" className="absolute -inset-2 bg-primary/10 rounded-full -z-10" />
+                    )}
+                  </div>
+                  <span className={cn("text-[10px] font-medium transition-all", isActive ? "opacity-100" : "opacity-70")}>
+                    {t(item.titleKey)}
+                  </span>
+                </>
+              )}
+            </NavLink>
+          ))}
+          
+          {/* More Button */}
+          <button
+            onClick={() => setIsMobileMenuOpen(!isMobileMenuOpen)}
+            className={cn(
+              "flex flex-col items-center justify-center w-full h-full space-y-1 relative group transition-colors",
+              isMobileMenuOpen ? "text-primary" : "text-muted-foreground hover:text-foreground"
+            )}
+          >
+            <div className="relative">
+              <MoreHorizontal className={cn("w-6 h-6 transition-transform duration-200", isMobileMenuOpen && "scale-110")} strokeWidth={isMobileMenuOpen ? 2.5 : 2} />
+              {isMobileMenuOpen && (
+                <motion.div layoutId="nav-indicator" className="absolute -inset-2 bg-primary/10 rounded-full -z-10" />
+              )}
+            </div>
+            <span className={cn("text-[10px] font-medium transition-all", isMobileMenuOpen ? "opacity-100" : "opacity-70")}>
+              More
+            </span>
+          </button>
+        </div>
+      </nav>
+
+      {/* Mobile "More" Menu Overlay / Bottom Sheet */}
+      <AnimatePresence>
+        {isMobileMenuOpen && (
+          <>
+            <motion.div 
+              initial={{ opacity: 0 }}
+              animate={{ opacity: 1 }}
+              exit={{ opacity: 0 }}
+              onClick={() => setIsMobileMenuOpen(false)}
+              className="sm:hidden fixed inset-0 z-40 bg-background/80 backdrop-blur-sm"
+            />
+            <motion.div
+              initial={{ y: "100%" }}
+              animate={{ y: 0 }}
+              exit={{ y: "100%" }}
+              transition={{ type: "spring", damping: 25, stiffness: 200 }}
+              className="sm:hidden fixed bottom-16 left-0 right-0 z-40 bg-card border-t rounded-t-3xl shadow-[0_-10px_40px_rgba(0,0,0,0.1)] overflow-hidden max-h-[75vh] flex flex-col"
+            >
+              <div className="w-12 h-1.5 bg-muted rounded-full mx-auto my-3 opacity-50 shrink-0" />
+              <div className="px-6 pb-2 shrink-0">
+                <h3 className="text-lg font-bold">More Options</h3>
+              </div>
+              <div className="flex-1 overflow-y-auto px-4 pb-6 scrollbar-hide space-y-1">
+                {sidebarNavItems.slice(4).map((item, index) => (
+                  <motion.div
+                    key={item.href}
+                    initial={{ x: -20, opacity: 0 }}
+                    animate={{ x: 0, opacity: 1 }}
+                    transition={{ delay: index * 0.04 }}
+                  >
+                    <NavLink
+                      to={item.href}
+                      replace={true}
+                      onClick={() => setIsMobileMenuOpen(false)}
+                      className={({ isActive }) =>
+                        cn(
+                          "flex items-center gap-4 rounded-2xl px-4 py-3.5 text-sm font-medium transition-colors",
+                          isActive ? "bg-primary text-primary-foreground" : "text-muted-foreground hover:bg-muted"
+                        )
+                      }
+                    >
+                      <item.icon className="h-5 w-5" />
+                      {t(item.titleKey)}
+                    </NavLink>
+                  </motion.div>
+                ))}
+                
+                {isInstallable && (
+                  <motion.div
+                    initial={{ y: 20, opacity: 0 }}
+                    animate={{ y: 0, opacity: 1 }}
+                    transition={{ delay: 0.3 }}
+                    className="pt-4 mt-2 border-t"
+                  >
+                    <button
+                      onClick={() => {
+                        promptInstall()
+                        setIsMobileMenuOpen(false)
+                      }}
+                      className="flex w-full items-center justify-center gap-2 rounded-xl bg-gradient-to-r from-indigo-500 to-primary px-4 py-3.5 text-sm font-bold text-white shadow-lg"
+                    >
+                      <Download className="h-5 w-5" />
+                      Install Finora App
+                    </button>
+                  </motion.div>
+                )}
+              </div>
+            </motion.div>
+          </>
+        )}
+      </AnimatePresence>
 
       {/* Global Command Palette */}
       <CommandPalette />
