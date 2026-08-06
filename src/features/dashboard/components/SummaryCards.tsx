@@ -1,9 +1,9 @@
 import { useMemo, useState } from "react"
-import { Wallet as WalletIcon, TrendingUp, TrendingDown, PiggyBank, Filter } from "lucide-react"
+import { Wallet as WalletIcon, TrendingUp, TrendingDown, PiggyBank } from "lucide-react"
 import { useTranslation } from "react-i18next"
 
 import { useFinance } from "@/store/FinanceContext"
-import { formatCurrency } from "@/lib/utils"
+import { formatCurrency, cn } from "@/lib/utils"
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card"
 import { NumberTicker } from "@/components/ui/number-ticker"
 
@@ -84,24 +84,93 @@ export function SummaryCards() {
 
   return (
     <div className="space-y-4">
-      <div className="flex justify-end mb-4 relative print:hidden">
-        <select 
-          className="w-full sm:w-[250px] appearance-none bg-card/60 backdrop-blur-md border border-primary/20 shadow-sm rounded-md px-3 py-2 pl-9 pr-8 text-sm font-medium focus:outline-none focus:ring-2 focus:ring-primary/50 text-foreground cursor-pointer transition-colors hover:bg-card/80"
-          value={selectedWalletId} 
-          onChange={(e) => setSelectedWalletId(e.target.value)}
-        >
-          <option value="all">{t('dashboard.allWallets')}</option>
-          {wallets.map(w => (
-            <option key={w.id} value={w.id}>
-              {w.name}
-            </option>
-          ))}
-        </select>
-        <Filter className="absolute left-3 top-1/2 -translate-y-1/2 h-3.5 w-3.5 text-muted-foreground pointer-events-none" />
-        <div className="absolute right-3 top-1/2 -translate-y-1/2 pointer-events-none text-muted-foreground">
-          <svg width="15" height="15" viewBox="0 0 15 15" fill="none" xmlns="http://www.w3.org/2000/svg">
-            <path d="M4.18179 6.18181C4.35753 6.00608 4.64245 6.00608 4.81819 6.18181L7.49999 8.86362L10.1818 6.18181C10.3575 6.00608 10.6424 6.00608 10.8182 6.18181C10.9939 6.35755 10.9939 6.64247 10.8182 6.81821L7.81819 9.81821C7.73379 9.9026 7.61934 9.95001 7.49999 9.95001C7.38064 9.95001 7.26618 9.9026 7.18179 9.81821L4.18179 6.81821C4.00605 6.64247 4.00605 6.35755 4.18179 6.18181Z" fill="currentColor" fillRule="evenodd" clipRule="evenodd"></path>
-          </svg>
+      {/* Mobile-Native Wallet Carousel */}
+      <div className="relative mb-6 print:hidden -mx-4 sm:mx-0 px-4 sm:px-0">
+        <div className="flex overflow-x-auto gap-3 sm:gap-4 snap-x snap-mandatory scrollbar-hide pb-4 items-center">
+          
+          {/* All Wallets Card */}
+          <div 
+            onClick={() => setSelectedWalletId("all")}
+            className={cn(
+              "snap-center shrink-0 w-[260px] sm:w-[300px] h-[150px] sm:h-[170px] rounded-2xl p-5 cursor-pointer transition-all duration-300 relative overflow-hidden group",
+              selectedWalletId === "all" ? "ring-2 ring-primary/50 shadow-[0_8px_30px_rgb(0,0,0,0.12)] scale-100" : "scale-95 opacity-60 hover:opacity-100 shadow-md grayscale-[50%]"
+            )}
+          >
+            <div className="absolute inset-0 bg-gradient-to-br from-slate-800 via-slate-900 to-black" />
+            <div className="absolute top-0 right-0 w-32 h-32 bg-white/5 rounded-full blur-2xl -translate-y-1/2 translate-x-1/4" />
+            <div className="relative z-10 flex flex-col h-full justify-between text-white">
+              <div className="flex justify-between items-start">
+                <div>
+                  <p className="text-xs font-medium text-white/60 uppercase tracking-widest mb-1">{t('dashboard.allWallets')}</p>
+                  <div className="w-8 h-6 bg-white/20 rounded-md backdrop-blur-sm border border-white/10 flex items-center justify-center">
+                    <div className="w-4 h-3 rounded-sm bg-gradient-to-r from-yellow-200 to-yellow-500 opacity-80" />
+                  </div>
+                </div>
+                <div className="p-2 bg-white/10 rounded-full backdrop-blur-md">
+                  <WalletIcon className="w-4 h-4 text-white" />
+                </div>
+              </div>
+              <div>
+                <p className="text-2xl font-bold tracking-tight">
+                  {formatCurrency(balance, currency)}
+                </p>
+                <p className="text-xs text-white/50 mt-1 font-mono tracking-widest">
+                  **** **** **** TOTAL
+                </p>
+              </div>
+            </div>
+          </div>
+
+          {/* Individual Wallet Cards */}
+          {wallets.map((w, idx) => {
+            // Assign some preset gradient colors based on index to make them look distinct
+            const gradients = [
+              "from-blue-600 to-indigo-900",
+              "from-emerald-500 to-teal-900",
+              "from-rose-500 to-red-900",
+              "from-amber-500 to-orange-900",
+              "from-violet-600 to-purple-900"
+            ]
+            const bgGradient = gradients[idx % gradients.length]
+            
+            return (
+              <div 
+                key={w.id}
+                onClick={() => setSelectedWalletId(w.id)}
+                className={cn(
+                  "snap-center shrink-0 w-[260px] sm:w-[300px] h-[150px] sm:h-[170px] rounded-2xl p-5 cursor-pointer transition-all duration-300 relative overflow-hidden group",
+                  selectedWalletId === w.id ? "ring-2 ring-primary/50 shadow-[0_8px_30px_rgb(0,0,0,0.12)] scale-100" : "scale-95 opacity-60 hover:opacity-100 shadow-md grayscale-[30%]"
+                )}
+              >
+                <div className={cn("absolute inset-0 bg-gradient-to-br", bgGradient)} />
+                <div className="absolute top-0 left-0 w-full h-full bg-[url('https://www.transparenttextures.com/patterns/carbon-fibre.png')] opacity-10 mix-blend-overlay" />
+                <div className="absolute bottom-0 right-0 w-40 h-40 bg-white/10 rounded-full blur-3xl translate-y-1/3 translate-x-1/3" />
+                
+                <div className="relative z-10 flex flex-col h-full justify-between text-white drop-shadow-sm">
+                  <div className="flex justify-between items-start">
+                    <div>
+                      <p className="text-xs font-medium text-white/80 uppercase tracking-widest mb-1 truncate max-w-[140px]">{w.name}</p>
+                      <div className="w-8 h-6 bg-white/20 rounded-md backdrop-blur-sm border border-white/10 flex items-center justify-center shadow-inner">
+                        <div className="w-4 h-3 rounded-sm bg-gradient-to-r from-yellow-200 to-yellow-500 opacity-90" />
+                      </div>
+                    </div>
+                    <div className="p-2 bg-black/20 rounded-full backdrop-blur-md border border-white/10">
+                      <WalletIcon className="w-4 h-4 text-white" />
+                    </div>
+                  </div>
+                  <div>
+                    <p className="text-2xl font-bold tracking-tight">
+                      {formatCurrency(w.balance, w.currency || currency)}
+                    </p>
+                    <p className="text-xs text-white/70 mt-1 font-mono tracking-widest flex items-center justify-between">
+                      <span>**** **** **** {w.id.substring(w.id.length - 4).toUpperCase()}</span>
+                      <span className="opacity-80">{w.currency || currency}</span>
+                    </p>
+                  </div>
+                </div>
+              </div>
+            )
+          })}
         </div>
       </div>
 

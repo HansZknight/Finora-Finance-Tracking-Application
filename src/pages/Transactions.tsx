@@ -1,4 +1,5 @@
-import { useState } from "react"
+import { useState, useEffect } from "react"
+import { useSearchParams } from "react-router-dom"
 import { format } from "date-fns"
 import { Plus, Search, Filter, Download, Paperclip } from "lucide-react"
 import { toast } from "sonner"
@@ -34,6 +35,16 @@ export function Transactions() {
   const [isModalOpen, setIsModalOpen] = useState(false)
   const [transactionToEdit, setTransactionToEdit] = useState<Transaction | null>(null)
   const [viewingReceipt, setViewingReceipt] = useState<string | null>(null)
+  const [searchParams, setSearchParams] = useSearchParams()
+
+  useEffect(() => {
+    if (searchParams.get("new") === "true") {
+      setTransactionToEdit(null)
+      setIsModalOpen(true)
+      searchParams.delete("new")
+      setSearchParams(searchParams, { replace: true })
+    }
+  }, [searchParams, setSearchParams])
 
   // Filters
   const [searchTerm, setSearchTerm] = useState("")

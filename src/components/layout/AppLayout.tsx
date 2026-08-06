@@ -1,6 +1,6 @@
 import React from 'react'
 import { Outlet, NavLink } from 'react-router-dom'
-import { LayoutDashboard, Receipt, PieChart, Target, Settings, Tags, Repeat, CreditCard, LineChart, Wallet, TrendingUp, Download, MoreHorizontal } from 'lucide-react'
+import { LayoutDashboard, Receipt, PieChart, Target, Settings, Tags, Repeat, CreditCard, LineChart, Wallet, TrendingUp, Download, MoreHorizontal, Plus } from 'lucide-react'
 import { cn } from '@/lib/utils'
 import { useTranslation } from 'react-i18next'
 import { motion, AnimatePresence } from 'framer-motion'
@@ -292,6 +292,16 @@ export function AppLayout() {
           </>
         )}
       </AnimatePresence>
+
+      {/* Mobile FAB (Floating Action Button) */}
+      <div className="sm:hidden fixed bottom-20 right-4 z-50">
+        <NavLink 
+          to="/transactions?new=true"
+          className="flex h-14 w-14 items-center justify-center rounded-full bg-primary text-primary-foreground shadow-lg shadow-primary/40 transition-transform active:scale-95"
+        >
+          <Plus className="h-6 w-6" strokeWidth={2.5} />
+        </NavLink>
+      </div>
 
       {/* Global Command Palette */}
       <CommandPalette />
