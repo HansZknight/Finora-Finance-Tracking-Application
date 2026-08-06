@@ -8,9 +8,11 @@ import { Label } from "@/components/ui/label"
 import { formatCurrency } from "@/lib/utils"
 import { v4 as uuidv4 } from "uuid"
 import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogFooter, DialogDescription } from "@/components/ui/dialog"
+import { useTranslation } from "react-i18next"
 import type { Trip } from "@/types"
 
 export function Trips() {
+  const { t } = useTranslation()
   const { trips, activeTripId, setActiveTripId, addTrip, updateTrip, deleteTrip, transactions, currency, exchangeRates, convertCurrency } = useFinance()
   const [searchTerm, setSearchTerm] = useState("")
   const [isModalOpen, setIsModalOpen] = useState(false)
@@ -103,13 +105,13 @@ export function Trips() {
     <div className="space-y-6 animate-in fade-in slide-in-from-bottom-4 duration-500 pb-20 md:pb-6">
       <div className="flex flex-col md:flex-row justify-between items-start md:items-center gap-4">
         <div>
-          <h1 className="text-2xl sm:text-3xl font-extrabold tracking-tight">Travel Mode</h1>
+          <h1 className="text-2xl sm:text-3xl font-extrabold tracking-tight">{t('trips.title', 'Travel Mode & Trips')}</h1>
           <p className="text-muted-foreground mt-1 text-sm sm:text-base">
-            Isolate holiday budgets so they don't ruin your home analytics.
+            {t('trips.subtitle', 'Isolate your holiday expenses from your home budget.')}
           </p>
         </div>
         <Button onClick={() => handleOpenModal()} className="rounded-full shadow-lg">
-          <Plus className="w-4 h-4 mr-2" /> Plan Trip
+          <Plus className="w-4 h-4 mr-2" /> {t('trips.planTrip', 'Plan Trip')}
         </Button>
       </div>
 
@@ -119,8 +121,8 @@ export function Trips() {
             <Plane className="w-8 h-8 text-cyan-600 dark:text-cyan-400" />
           </div>
           <div>
-            <p className="font-semibold text-lg">How Travel Mode Works</p>
-            <p className="text-sm text-muted-foreground">Activate a trip below. While active, any new transactions you add will automatically be tagged to this trip, helping you track holiday spending separately.</p>
+            <p className="font-semibold text-lg">{t('trips.travelModeActive', 'How Travel Mode Works')}</p>
+            <p className="text-sm text-muted-foreground">{t('trips.travelModeDesc', 'Activate a trip below. While active, any new transactions you add will automatically be tagged to this trip, helping you track holiday spending separately.')}</p>
           </div>
         </CardContent>
       </Card>
@@ -128,7 +130,7 @@ export function Trips() {
       <div className="flex items-center gap-3 bg-card border rounded-xl p-2 shadow-sm mb-4">
         <Search className="w-5 h-5 text-muted-foreground ml-2" />
         <Input 
-          placeholder="Search trips..." 
+          placeholder={t('nav.search', 'Search...')} 
           value={searchTerm}
           onChange={(e) => setSearchTerm(e.target.value)}
           className="border-0 shadow-none focus-visible:ring-0 px-0"
@@ -145,7 +147,7 @@ export function Trips() {
             <Card key={trip.id} className={`overflow-hidden transition-all duration-300 ${isActive ? 'ring-2 ring-cyan-500 shadow-lg scale-[1.02]' : 'hover:shadow-md border'}`}>
               {isActive && (
                 <div className="bg-cyan-500 text-white text-xs text-center py-1 font-bold uppercase tracking-wider">
-                  Mode Active
+                  {t('trips.travelModeActive', 'Mode Active')}
                 </div>
               )}
               <CardContent className="p-5">
@@ -169,7 +171,7 @@ export function Trips() {
                 <div className="space-y-4">
                   <div>
                     <div className="flex justify-between text-sm mb-1">
-                      <span className="text-muted-foreground">Spent ({trip.currency})</span>
+                      <span className="text-muted-foreground">{t('trips.spent', 'Spent')} ({trip.currency})</span>
                       <span className={`font-bold ${isOverBudget ? 'text-destructive' : ''}`}>
                         {formatCurrency(trip.totalExpense, trip.currency)} / {formatCurrency(trip.budget, trip.currency)}
                       </span>
@@ -191,9 +193,9 @@ export function Trips() {
                       onClick={() => toggleTravelMode(trip.id)}
                     >
                       {isActive ? (
-                        <><PowerOff className="w-3 h-3 mr-2" /> Disable Mode</>
+                        <><PowerOff className="w-3 h-3 mr-2" /> {t('trips.turnOff', 'Turn Off')}</>
                       ) : (
-                        <><Power className="w-3 h-3 mr-2" /> Enable Mode</>
+                        <><Power className="w-3 h-3 mr-2" /> {t('trips.turnOn', 'Turn On')}</>
                       )}
                     </Button>
                   </div>
@@ -206,9 +208,9 @@ export function Trips() {
         {tripsWithExpenses.length === 0 && (
           <div className="col-span-full py-12 text-center text-muted-foreground bg-muted/20 rounded-xl border border-dashed">
             <MapPin className="w-12 h-12 mx-auto mb-4 opacity-20" />
-            <p className="font-medium text-lg">No trips planned</p>
-            <p className="text-sm opacity-70 mb-4">Start planning your next holiday to isolate its expenses.</p>
-            <Button onClick={() => handleOpenModal()}>Create First Trip</Button>
+            <p className="font-medium text-lg">{t('trips.noTrips', 'No trips planned')}</p>
+            <p className="text-sm opacity-70 mb-4">{t('trips.planFirst', 'Start planning your next holiday to isolate its expenses.')}</p>
+            <Button onClick={() => handleOpenModal()}>{t('trips.planTrip', 'Create First Trip')}</Button>
           </div>
         )}
       </div>
@@ -216,14 +218,11 @@ export function Trips() {
       <Dialog open={isModalOpen} onOpenChange={setIsModalOpen}>
         <DialogContent className="sm:max-w-[425px]">
           <DialogHeader>
-            <DialogTitle>{tripToEdit ? 'Edit Trip' : 'Plan New Trip'}</DialogTitle>
-            <DialogDescription>
-              Set a budget in your destination's currency.
-            </DialogDescription>
+            <DialogTitle>{tripToEdit ? t('trips.editTrip', 'Edit Trip') : t('trips.addTrip', 'Plan New Trip')}</DialogTitle>
           </DialogHeader>
           <div className="grid gap-4 py-4">
             <div className="space-y-2">
-              <Label>Destination / Trip Name</Label>
+              <Label>{t('trips.tripName', 'Destination / Trip Name')}</Label>
               <Input value={formData.name} onChange={e => setFormData({...formData, name: e.target.value})} placeholder="Bali Summer 2026" />
             </div>
             <div className="grid grid-cols-2 gap-4">
@@ -238,11 +237,11 @@ export function Trips() {
             </div>
             <div className="grid grid-cols-2 gap-4">
               <div className="space-y-2">
-                <Label>Budget</Label>
+                <Label>{t('trips.budget', 'Budget')}</Label>
                 <Input type="number" value={formData.budget} onChange={e => setFormData({...formData, budget: parseFloat(e.target.value)})} />
               </div>
               <div className="space-y-2">
-                <Label>Currency</Label>
+                <Label>{t('trips.currency', 'Currency')}</Label>
                 <select 
                   className="flex h-10 w-full rounded-md border border-input bg-background px-3 py-2 text-sm ring-offset-background"
                   value={formData.currency}
@@ -261,8 +260,8 @@ export function Trips() {
             </div>
           </div>
           <DialogFooter>
-            <Button variant="outline" onClick={() => setIsModalOpen(false)}>Cancel</Button>
-            <Button onClick={handleSave} disabled={!formData.name}>Save Trip</Button>
+            <Button variant="outline" onClick={() => setIsModalOpen(false)}>{t('contacts.cancel', 'Cancel')}</Button>
+            <Button onClick={handleSave} disabled={!formData.name}>{t('trips.save', 'Save Trip')}</Button>
           </DialogFooter>
         </DialogContent>
       </Dialog>

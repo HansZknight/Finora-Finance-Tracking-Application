@@ -10,9 +10,11 @@ import { formatCurrency } from "@/lib/utils"
 import { toast } from "sonner"
 import { v4 as uuidv4 } from "uuid"
 import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogFooter } from "@/components/ui/dialog"
+import { useTranslation } from "react-i18next"
 import type { Contact } from "@/types"
 
 export function Contacts() {
+  const { t } = useTranslation()
   const { contacts, transactions, currency, addContact, updateContact, deleteContact, wallets, addTransaction } = useFinance()
   const [searchTerm, setSearchTerm] = useState("")
   const [isModalOpen, setIsModalOpen] = useState(false)
@@ -114,13 +116,13 @@ export function Contacts() {
     <div className="space-y-6 animate-in fade-in slide-in-from-bottom-4 duration-500 pb-20 md:pb-6">
       <div className="flex flex-col md:flex-row justify-between items-start md:items-center gap-4">
         <div>
-          <h1 className="text-2xl sm:text-3xl font-extrabold tracking-tight">Split Bills & Contacts</h1>
+          <h1 className="text-2xl sm:text-3xl font-extrabold tracking-tight">{t('contacts.title', 'Split Bills & Contacts')}</h1>
           <p className="text-muted-foreground mt-1 text-sm sm:text-base">
-            Track shared expenses and see who owes you money.
+            {t('contacts.subtitle', 'Track shared expenses and see who owes you money.')}
           </p>
         </div>
         <Button onClick={() => handleOpenModal()} className="rounded-full shadow-lg">
-          <Plus className="w-4 h-4 mr-2" /> Add Friend
+          <Plus className="w-4 h-4 mr-2" /> {t('contacts.addFriend', 'Add Friend')}
         </Button>
       </div>
 
@@ -128,7 +130,7 @@ export function Contacts() {
         <Card className="bg-gradient-to-br from-indigo-500/10 to-indigo-500/5 border-indigo-500/20 shadow-md">
           <CardHeader className="pb-2">
             <CardTitle className="text-sm font-medium text-muted-foreground flex items-center gap-2">
-              <Wallet className="w-4 h-4" /> Total Owed to You
+              <Wallet className="w-4 h-4" /> {t('contacts.totalOwed', 'Total Owed to You')}
             </CardTitle>
           </CardHeader>
           <CardContent>
@@ -143,8 +145,8 @@ export function Contacts() {
               <Users className="w-8 h-8 text-primary" />
             </div>
             <div>
-              <p className="font-semibold text-lg">Pro Tip: Split Expenses</p>
-              <p className="text-sm text-muted-foreground">When adding a new transaction, you can now check "Split Bill" to divide the cost with a friend. It will automatically be tracked here.</p>
+              <p className="font-semibold text-lg">{t('contacts.proTip', 'Pro Tip: Split Expenses')}</p>
+              <p className="text-sm text-muted-foreground">{t('contacts.proTipDesc', 'When adding a new transaction, you can now check "Split Bill" to divide the cost with a friend. It will automatically be tracked here.')}</p>
             </div>
           </CardContent>
         </Card>
@@ -153,7 +155,7 @@ export function Contacts() {
       <div className="flex items-center gap-3 bg-card border rounded-xl p-2 shadow-sm">
         <Search className="w-5 h-5 text-muted-foreground ml-2" />
         <Input 
-          placeholder="Search friends..." 
+          placeholder={t('contacts.search', 'Search friends...')} 
           value={searchTerm}
           onChange={(e) => setSearchTerm(e.target.value)}
           className="border-0 shadow-none focus-visible:ring-0 px-0"
@@ -194,7 +196,7 @@ export function Contacts() {
               
               <div className="bg-muted/30 px-5 py-3 border-t flex flex-col sm:flex-row justify-between items-start sm:items-center gap-3">
                 <div className="flex items-center gap-2">
-                  <span className="text-sm font-medium text-muted-foreground">Owes You:</span>
+                  <span className="text-sm font-medium text-muted-foreground">{t('contacts.owesYou', 'Owes You:')}</span>
                   <span className={`font-bold ${contact.amountOwedToYou > 0 ? 'text-indigo-500' : 'text-muted-foreground'}`}>
                     {formatCurrency(contact.amountOwedToYou, currency)}
                   </span>
@@ -205,7 +207,7 @@ export function Contacts() {
                     className="w-full sm:w-auto h-8 text-xs bg-indigo-500 hover:bg-indigo-600"
                     onClick={() => handleOpenSettleModal(contact, contact.amountOwedToYou)}
                   >
-                    <CheckCircle2 className="w-3 h-3 mr-1.5" /> Settle Up
+                    <CheckCircle2 className="w-3 h-3 mr-1.5" /> {t('contacts.settleUp', 'Settle Up')}
                   </Button>
                 )}
               </div>
@@ -216,8 +218,8 @@ export function Contacts() {
         {contactsWithDebts.length === 0 && (
           <div className="col-span-full py-12 text-center text-muted-foreground">
             <Users className="w-12 h-12 mx-auto mb-4 opacity-20" />
-            <p>No contacts found.</p>
-            <Button variant="link" onClick={() => handleOpenModal()}>Add your first friend</Button>
+            <p>{t('contacts.noContacts', 'No contacts found.')}</p>
+            <Button variant="link" onClick={() => handleOpenModal()}>{t('contacts.addFirst', 'Add your first friend')}</Button>
           </div>
         )}
       </div>
@@ -225,25 +227,25 @@ export function Contacts() {
       <Dialog open={isModalOpen} onOpenChange={setIsModalOpen}>
         <DialogContent className="sm:max-w-[425px]">
           <DialogHeader>
-            <DialogTitle>{contactToEdit ? 'Edit Friend' : 'Add Friend'}</DialogTitle>
+            <DialogTitle>{contactToEdit ? t('contacts.editFriend', 'Edit Friend') : t('contacts.addFriend', 'Add Friend')}</DialogTitle>
           </DialogHeader>
           <div className="grid gap-4 py-4">
             <div className="space-y-2">
-              <Label>Name</Label>
+              <Label>{t('contacts.name', 'Name')}</Label>
               <Input value={formData.name} onChange={e => setFormData({...formData, name: e.target.value})} placeholder="John Doe" />
             </div>
             <div className="space-y-2">
-              <Label>Email (Optional)</Label>
+              <Label>{t('contacts.email', 'Email (Optional)')}</Label>
               <Input type="email" value={formData.email} onChange={e => setFormData({...formData, email: e.target.value})} placeholder="john@example.com" />
             </div>
             <div className="space-y-2">
-              <Label>Avatar URL (Optional)</Label>
+              <Label>{t('contacts.avatar', 'Avatar URL (Optional)')}</Label>
               <Input value={formData.avatar} onChange={e => setFormData({...formData, avatar: e.target.value})} placeholder="https://..." />
             </div>
           </div>
           <DialogFooter>
-            <Button variant="outline" onClick={() => setIsModalOpen(false)}>Cancel</Button>
-            <Button onClick={handleSave} disabled={!formData.name}>Save Contact</Button>
+            <Button variant="outline" onClick={() => setIsModalOpen(false)}>{t('contacts.cancel', 'Cancel')}</Button>
+            <Button onClick={handleSave} disabled={!formData.name}>{t('contacts.save', 'Save Contact')}</Button>
           </DialogFooter>
         </DialogContent>
       </Dialog>
@@ -251,14 +253,14 @@ export function Contacts() {
       <Dialog open={isSettleModalOpen} onOpenChange={setIsSettleModalOpen}>
         <DialogContent className="sm:max-w-[425px]">
           <DialogHeader>
-            <DialogTitle>Settle Debt</DialogTitle>
+            <DialogTitle>{t('contacts.settleDebt', 'Settle Debt')}</DialogTitle>
           </DialogHeader>
           <div className="py-4 space-y-4">
             <p className="text-sm text-muted-foreground">
-              Record a payment from <strong>{contactToSettle?.name}</strong> to reduce their debt.
+              {t('contacts.recordPaymentDesc', 'Record a payment from')} <strong>{contactToSettle?.name}</strong> {t('contacts.toReduceDebt', 'to reduce their debt.')}
             </p>
             <div className="space-y-2">
-              <Label>Amount Paid Back</Label>
+              <Label>{t('contacts.amountPaid', 'Amount Paid Back')}</Label>
               <div className="relative">
                 <span className="absolute left-3 top-1/2 -translate-y-1/2 text-muted-foreground text-sm">
                   {currency}
@@ -272,7 +274,7 @@ export function Contacts() {
               </div>
             </div>
             <div className="space-y-2">
-              <Label>Receive to Wallet</Label>
+              <Label>{t('contacts.receiveTo', 'Receive to Wallet')}</Label>
               <Select value={settleWalletId} onValueChange={setSettleWalletId}>
                 <SelectTrigger>
                   <SelectValue placeholder="Select wallet" />
@@ -286,8 +288,8 @@ export function Contacts() {
             </div>
           </div>
           <DialogFooter>
-            <Button variant="outline" onClick={() => setIsSettleModalOpen(false)}>Cancel</Button>
-            <Button onClick={handleSettleUp} disabled={settleAmount <= 0 || !settleWalletId}>Record Payment</Button>
+            <Button variant="outline" onClick={() => setIsSettleModalOpen(false)}>{t('contacts.cancel', 'Cancel')}</Button>
+            <Button onClick={handleSettleUp} disabled={settleAmount <= 0 || !settleWalletId}>{t('contacts.recordPayment', 'Record Payment')}</Button>
           </DialogFooter>
         </DialogContent>
       </Dialog>

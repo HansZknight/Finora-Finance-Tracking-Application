@@ -6,8 +6,10 @@ import { Area, AreaChart, CartesianGrid, ResponsiveContainer, Tooltip, XAxis, YA
 import { Flame, TrendingUp, DollarSign } from "lucide-react"
 import { useFinance } from "@/store/FinanceContext"
 import { formatCurrency } from "@/lib/utils"
+import { useTranslation } from "react-i18next"
 
 export function FIRESimulator() {
+  const { t } = useTranslation()
   const { currency, wallets } = useFinance()
   const totalLiquidAssets = wallets.reduce((sum, w) => sum + w.balance, 0)
 
@@ -72,43 +74,43 @@ export function FIRESimulator() {
           <div className="p-2 bg-orange-500/20 rounded-xl">
             <Flame className="w-6 h-6 text-orange-500" />
           </div>
-          FIRE Simulator
+          {t('fire.title', 'FIRE Simulator')}
         </CardTitle>
-        <CardDescription>Financial Independence, Retire Early. See when you can safely stop working.</CardDescription>
+        <CardDescription>{t('fire.subtitle', 'Financial Independence, Retire Early. See when you can safely stop working.')}</CardDescription>
       </CardHeader>
       
       <CardContent className="relative z-10 space-y-8">
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
           <div className="space-y-2">
-            <Label>Current Age</Label>
+            <Label>{t('fire.currentAge', 'Current Age')}</Label>
             <Input type="number" value={currentAge} onChange={(e) => setCurrentAge(Number(e.target.value))} />
           </div>
           <div className="space-y-2">
-            <Label>Retirement Age</Label>
+            <Label>{t('fire.retirementAge', 'Retirement Age')}</Label>
             <Input type="number" value={retirementAge} onChange={(e) => setRetirementAge(Number(e.target.value))} />
           </div>
           <div className="space-y-2">
-            <Label>Current Portfolio</Label>
+            <Label>{t('fire.portfolio', 'Current Portfolio')}</Label>
             <Input type="number" value={currentPortfolio} onChange={(e) => setCurrentPortfolio(Number(e.target.value))} />
           </div>
           <div className="space-y-2">
-            <Label>Monthly Contribution</Label>
+            <Label>{t('fire.monthlyContribution', 'Monthly Contribution')}</Label>
             <Input type="number" value={monthlyContribution} onChange={(e) => setMonthlyContribution(Number(e.target.value))} />
           </div>
           <div className="space-y-2">
-            <Label>Annual Return (%)</Label>
+            <Label>{t('fire.annualReturn', 'Annual Return (%)')}</Label>
             <Input type="number" value={annualReturn} onChange={(e) => setAnnualReturn(Number(e.target.value))} />
           </div>
           <div className="space-y-2">
-            <Label>Inflation Rate (%)</Label>
+            <Label>{t('fire.inflation', 'Inflation Rate (%)')}</Label>
             <Input type="number" value={inflationRate} onChange={(e) => setInflationRate(Number(e.target.value))} />
           </div>
           <div className="space-y-2">
-            <Label>Est. Monthly Expenses in Retirement</Label>
+            <Label>{t('fire.monthlyIncome', 'Est. Monthly Expenses in Retirement')}</Label>
             <Input type="number" value={monthlyExpenses} onChange={(e) => setMonthlyExpenses(Number(e.target.value))} />
           </div>
           <div className="space-y-2">
-            <Label>Safe Withdrawal Rate (%)</Label>
+            <Label>{t('fire.withdrawalRate', 'Safe Withdrawal Rate (%)')}</Label>
             <Input type="number" value={safeWithdrawalRate} onChange={(e) => setSafeWithdrawalRate(Number(e.target.value))} />
           </div>
         </div>
@@ -117,7 +119,7 @@ export function FIRESimulator() {
           <div className="col-span-1 space-y-4">
             <div className="bg-card/80 p-5 rounded-2xl border sm:backdrop-blur-sm shadow-sm">
               <p className="text-sm font-medium text-muted-foreground flex items-center gap-2">
-                <TrendingUp className="w-4 h-4" /> FIRE Number
+                <TrendingUp className="w-4 h-4" /> {t('fire.target', 'FIRE Target Amount')}
               </p>
               <p className="text-3xl font-bold mt-2 text-orange-500">
                 {formatCurrency(fireData.fireNumber, currency)}
@@ -133,15 +135,15 @@ export function FIRESimulator() {
                 : 'bg-destructive/10 border-destructive/20'
             }`}>
               <p className="text-sm font-medium flex items-center gap-2">
-                <DollarSign className="w-4 h-4" /> Portfolio at Age {lifeExpectancy}
+                <DollarSign className="w-4 h-4" /> {t('fire.projected', 'Projected Portfolio at age')} {lifeExpectancy}
               </p>
               <p className="text-2xl font-bold mt-2">
                 {formatCurrency(fireData.data[fireData.data.length - 1].portfolio, currency)}
               </p>
               <p className="text-xs mt-2 opacity-80">
                 {fireData.data[fireData.data.length - 1].portfolio > 0 
-                  ? 'Your money outlasts you! You can safely retire.' 
-                  : 'You run out of money. Try saving more or retiring later.'}
+                  ? t('fire.onTrackDesc', 'Your money outlasts you! You can safely retire.') 
+                  : t('fire.needsDesc', 'You run out of money. Try saving more or retiring later.')}
               </p>
             </div>
           </div>

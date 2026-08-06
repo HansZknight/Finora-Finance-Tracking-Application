@@ -3,8 +3,10 @@ import { useFinance } from "@/store/FinanceContext"
 import { Flame, Trophy, TrendingUp, Star } from "lucide-react"
 import { formatCurrency } from "@/lib/utils"
 import { Card, CardContent, CardHeader, CardTitle, CardDescription } from "@/components/ui/card"
+import { useTranslation } from "react-i18next"
 
 export function GamificationHeatmap() {
+  const { t } = useTranslation()
   const { transactions, budgets } = useFinance()
 
   const heatmapData = useMemo(() => {
@@ -87,10 +89,10 @@ export function GamificationHeatmap() {
     const level = Math.floor(totalExp / 100) + 1
     const currentLevelExp = totalExp % 100
     
-    let rank = "Novice Saver"
-    if (level > 5) rank = "Budget Master"
-    if (level > 10) rank = "Financial Guru"
-    if (level > 20) rank = "Wealth Architect"
+    let rank = t('gamification.novice', 'Novice Saver')
+    if (level > 5) rank = t('gamification.master', 'Budget Master')
+    if (level > 10) rank = t('gamification.guru', 'Financial Guru')
+    if (level > 20) rank = t('gamification.architect', 'Wealth Architect')
 
     return {
       days,
@@ -112,9 +114,9 @@ export function GamificationHeatmap() {
         <div>
           <CardTitle className="text-xl flex items-center gap-2">
             <Trophy className="w-5 h-5 text-emerald-500" />
-            Financial Consistency
+            {t('gamification.title', 'Financial Consistency')}
           </CardTitle>
-          <CardDescription>Build good financial habits by keeping your daily spending in the green.</CardDescription>
+          <CardDescription>{t('gamification.subtitle', 'Build good financial habits by keeping your daily spending in the green.')}</CardDescription>
         </div>
 
         <div className="flex items-center gap-4 bg-background/50 p-2 pr-4 rounded-xl border backdrop-blur-sm shadow-inner">
@@ -143,15 +145,15 @@ export function GamificationHeatmap() {
         <div className="flex flex-col sm:flex-row gap-6">
           <div className="flex-1">
             <div className="flex items-end justify-between mb-2">
-              <p className="text-sm font-medium text-muted-foreground">365-Day Activity</p>
+              <p className="text-sm font-medium text-muted-foreground">{t('gamification.activity', '365-Day Activity')}</p>
               <div className="flex items-center gap-2 text-xs text-muted-foreground">
-                <span>Less</span>
+                <span>{t('gamification.less', 'Less')}</span>
                 <div className="w-3 h-3 rounded-sm bg-muted" />
                 <div className="w-3 h-3 rounded-sm bg-destructive/60" />
                 <div className="w-3 h-3 rounded-sm bg-emerald-500/40" />
                 <div className="w-3 h-3 rounded-sm bg-emerald-500/80" />
                 <div className="w-3 h-3 rounded-sm bg-emerald-500" />
-                <span>More</span>
+                <span>{t('gamification.more', 'More')}</span>
               </div>
             </div>
             
@@ -177,7 +179,7 @@ export function GamificationHeatmap() {
                     <div 
                       key={idx} 
                       className={`w-3 h-3 rounded-sm ${bgColor} hover:ring-2 hover:ring-ring hover:scale-125 transition-all cursor-pointer`}
-                      title={`${day.date}: ${day.expense > 0 ? formatCurrency(day.expense, 'IDR') + ' spent' : 'No spend'}`}
+                      title={`${day.date}: ${day.expense > 0 ? formatCurrency(day.expense, 'IDR') + ' ' + t('gamification.spent', 'spent') : t('gamification.noSpend', 'No spend')}`}
                     />
                   )
                 })}
@@ -189,12 +191,12 @@ export function GamificationHeatmap() {
             <div className="bg-card/60 border rounded-xl p-3 flex-1 flex flex-col items-center justify-center text-center">
               <Flame className="w-5 h-5 text-orange-500 mb-1" />
               <p className="text-xl font-black">{heatmapData.currentStreak}</p>
-              <p className="text-[10px] text-muted-foreground uppercase font-semibold">Day Streak</p>
+              <p className="text-[10px] text-muted-foreground uppercase font-semibold">{t('gamification.dayStreak', 'Day Streak')}</p>
             </div>
             <div className="bg-card/60 border rounded-xl p-3 flex-1 flex flex-col items-center justify-center text-center">
               <TrendingUp className="w-5 h-5 text-emerald-500 mb-1" />
               <p className="text-xl font-black">{heatmapData.totalGreenDays}</p>
-              <p className="text-[10px] text-muted-foreground uppercase font-semibold">Green Days</p>
+              <p className="text-[10px] text-muted-foreground uppercase font-semibold">{t('gamification.greenDays', 'Green Days')}</p>
             </div>
           </div>
         </div>
