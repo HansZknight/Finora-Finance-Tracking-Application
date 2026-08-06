@@ -1,5 +1,5 @@
 import { NavLink } from "react-router-dom"
-import { MoreHorizontal, Download, LayoutDashboard, Receipt, Wallet, TrendingUp, Tags, Repeat, CreditCard, PieChart, Target, Users, Plane, Settings } from "lucide-react"
+import { MoreHorizontal, Download, LayoutDashboard, Receipt, Wallet, TrendingUp, Tags, Repeat, CreditCard, PieChart, Target, Users, Plane, Settings, LineChart } from "lucide-react"
 import { cn } from "@/lib/utils"
 import { motion, AnimatePresence } from "framer-motion"
 import { useTranslation } from "react-i18next"
@@ -7,6 +7,7 @@ import { usePWAInstall } from "@/hooks/usePWAInstall"
 
 const sidebarNavItems = [
   { titleKey: "nav.dashboard", href: "/", icon: LayoutDashboard },
+  { titleKey: "nav.projections", href: "/projections", icon: LineChart },
   { titleKey: "nav.transactions", href: "/transactions", icon: Receipt },
   { titleKey: "nav.wallets", href: "/wallets", icon: Wallet },
   { titleKey: "nav.investments", href: "/investments", icon: TrendingUp },
