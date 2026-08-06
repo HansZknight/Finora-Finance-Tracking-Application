@@ -1,9 +1,8 @@
 import React from 'react'
 import { Outlet, NavLink } from 'react-router-dom'
-import { LayoutDashboard, Receipt, PieChart, Target, Settings, Tags, Repeat, CreditCard, LineChart, Wallet, TrendingUp, Download, MoreHorizontal, Plus, Users, Plane } from 'lucide-react'
+import { LayoutDashboard, Receipt, PieChart, Target, Settings, Tags, Repeat, CreditCard, LineChart, Wallet, TrendingUp, Download, Plus, Users, Plane } from 'lucide-react'
 import { cn } from '@/lib/utils'
 import { useTranslation } from 'react-i18next'
-import { motion, AnimatePresence } from 'framer-motion'
 
 import { CommandPalette } from '@/components/CommandPalette'
 import { usePWAInstall } from '@/hooks/usePWAInstall'
