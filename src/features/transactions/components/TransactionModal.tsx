@@ -463,7 +463,7 @@ export function TransactionModal({
               name="tags"
               render={({ field }) => (
                 <FormItem>
-                  <FormLabel>Tags (Press Enter)</FormLabel>
+                  <FormLabel>Tags (Press Space or Enter)</FormLabel>
                   <FormControl>
                     <div className="flex flex-wrap gap-2 p-2 border rounded-md min-h-[44px] bg-background">
                       {(field.value || []).map((tag: string, index: number) => (
@@ -487,7 +487,7 @@ export function TransactionModal({
                         placeholder={(!field.value || field.value.length === 0) ? "Add tags like 'Lunch' or 'Vacation'..." : ""}
                         className="flex-1 bg-transparent outline-none text-sm min-w-[120px]"
                         onKeyDown={(e) => {
-                          if (e.key === 'Enter' || e.key === ',') {
+                          if (e.key === 'Enter' || e.key === ',' || e.key === ' ') {
                             e.preventDefault()
                             const value = e.currentTarget.value.trim().replace(/^#/, '')
                             if (value && !(field.value || []).includes(value)) {
@@ -495,6 +495,13 @@ export function TransactionModal({
                             }
                             e.currentTarget.value = ""
                           }
+                        }}
+                        onBlur={(e) => {
+                          const value = e.currentTarget.value.trim().replace(/^#/, '')
+                          if (value && !(field.value || []).includes(value)) {
+                            field.onChange([...(field.value || []), value])
+                          }
+                          e.currentTarget.value = ""
                         }}
                       />
                     </div>
