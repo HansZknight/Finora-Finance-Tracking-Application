@@ -33,10 +33,14 @@ Finora is not just another expense tracker. It is a **Progressive Web App (PWA)*
 
 *   **📷 AI Smart Receipt Scanner**: Point your camera at any receipt, and the embedded **Tesseract AI** will automatically extract the store name and total amount. *(Works 100% offline in your browser!)*
 *   **🔐 Native Biometric Vault**: Lock your financial data behind a military-grade security vault. Uses **WebAuthn API** to integrate directly with your device's native **FaceID, TouchID, Windows Hello, or PIN** for seamless offline security.
+*   **🔮 FIRE Simulator (Financial Independence, Retire Early)**: Automatically calculates when you can retire based on your current savings rate, projected investment returns, and inflation adjustments.
+*   **🎮 Gamified Financial Consistency**: Uses a GitHub-style heatmap to track your daily spending streaks. Stay "in the green" to build healthy financial habits and level up your Saver Rank.
+*   **✈️ Collaborative Travel Mode**: Activate "Travel Mode" during trips to automatically bucket all expenses to a specific trip, with real-time multi-currency conversion based on your destination.
+*   **🤝 Split Bills & Contact Management**: Easily split bills with friends, track who owes you money, and manage contact-specific debts with a built-in "Settle Up" feature.
 *   **🔮 AI Cashflow Forecaster**: Uses your recurring habits and variable spending averages to project your net worth up to 6 months into the future.
 *   **⚡ Offline-First Architecture**: No cloud needed. Your data is stored securely on your device. It works flawlessly in airplane mode.
-*   **📱 Installable PWA**: Click "Install" in your browser to add it to your home screen. It functions exactly like a native app with a locked viewport and standalone UI.
-*   **🌍 Multi-Currency & Bilingual**: Automatically converts 7+ currencies on the fly and seamlessly switches between English and Indonesian.
+*   **📱 Installable PWA**: Click "Install" in your browser to add it to your home screen. It functions exactly like a native app with a locked viewport, mobile-first navigation, and standalone UI.
+*   **🌍 Multi-Currency & Bilingual**: Automatically converts 7+ currencies on the fly and seamlessly switches between English and Indonesian (Fully localized).
 *   **📈 Full Portfolio Tracking**: Track not just cash, but Debts, Budgets, Subscriptions, and Investments (Stocks, Crypto, Gold).
 
 ## 🛠️ Tech Stack
