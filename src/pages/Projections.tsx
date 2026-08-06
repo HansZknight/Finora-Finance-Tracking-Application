@@ -3,12 +3,12 @@ import { useFinance } from "@/store/FinanceContext"
 import { formatCurrency } from "@/lib/utils"
 import { Card, CardContent, CardHeader, CardTitle, CardDescription } from "@/components/ui/card"
 import { Area, AreaChart, CartesianGrid, ResponsiveContainer, Tooltip, XAxis, YAxis } from "recharts"
-import { TrendingUp, TrendingDown, Info, Wallet, Crown, BrainCircuit, Lightbulb, PieChart, ShieldAlert } from "lucide-react"
+import { TrendingUp, TrendingDown, Info, Wallet, Crown, BrainCircuit, Lightbulb, PieChart, ShieldAlert, Calculator } from "lucide-react"
 import { Button } from "@/components/ui/button"
 import { Progress } from "@/components/ui/progress"
 
 export function Projections() {
-  const { transactions, debts, wallets, categories, currency, isPro } = useFinance()
+  const { transactions, debts, wallets, categories, currency, isPro, convertCurrency } = useFinance()
 
   const [expenseModifier, setExpenseModifier] = useState(0) // percentage
   const [incomeModifier, setIncomeModifier] = useState(0) // percentage
@@ -229,6 +229,51 @@ export function Projections() {
 
     return { chartData: data, insights, finalBalance, startingBalance, baseMonthlyIncome, baseMonthlyExpense }
   }, [transactions, debts, currency, expenseModifier, incomeModifier])
+
+  // 4. AI Tax Estimator
+  const [taxStatus, setTaxStatus] = useState<"TK/0" | "K/0" | "K/1" | "K/2" | "K/3">("TK/0")
+  
+  const taxData = useMemo(() => {
+    const annualIncome = baseMonthlyIncome * 12
+    
+    const PTKP_RATES = {
+      "TK/0": 54000000,
+      "K/0": 58500000,
+      "K/1": 63000000,
+      "K/2": 67500000,
+      "K/3": 72000000,
+    }
+    
+    // Convert to IDR for accurate Indonesian PPh 21 calculation
+    const annualIncomeIDR = currency === 'IDR' ? annualIncome : convertCurrency(annualIncome, currency, 'IDR')
+    const ptkp = PTKP_RATES[taxStatus]
+    const pkp = Math.max(0, Math.floor((annualIncomeIDR - ptkp) / 1000) * 1000)
+    
+    let taxIDR = 0
+    if (pkp > 0) {
+      if (pkp <= 60000000) {
+        taxIDR = pkp * 0.05
+      } else if (pkp <= 250000000) {
+        taxIDR = (60000000 * 0.05) + ((pkp - 60000000) * 0.15)
+      } else if (pkp <= 500000000) {
+        taxIDR = (60000000 * 0.05) + (190000000 * 0.15) + ((pkp - 250000000) * 0.25)
+      } else if (pkp <= 5000000000) {
+        taxIDR = (60000000 * 0.05) + (190000000 * 0.15) + (250000000 * 0.25) + ((pkp - 500000000) * 0.30)
+      } else {
+        taxIDR = (60000000 * 0.05) + (190000000 * 0.15) + (250000000 * 0.25) + (4500000000 * 0.30) + ((pkp - 5000000000) * 0.35)
+      }
+    }
+
+    const taxAmount = currency === 'IDR' ? taxIDR : convertCurrency(taxIDR, 'IDR', currency)
+    const monthlySaving = taxAmount / 12
+
+    return { 
+      annualIncome, 
+      taxAmount, 
+      monthlySaving, 
+      ptkpFormatted: formatCurrency(currency === 'IDR' ? ptkp : convertCurrency(ptkp, 'IDR', currency), currency)
+    }
+  }, [baseMonthlyIncome, taxStatus, currency, convertCurrency])
 
   const trendColor = finalBalance >= startingBalance ? "text-emerald-500" : "text-destructive"
   const gradientColor = finalBalance >= startingBalance ? "#10b981" : "#ef4444"
@@ -546,6 +591,63 @@ export function Projections() {
                   <p className="text-sm font-medium leading-relaxed">{insight.text}</p>
                 </div>
               ))}
+            </CardContent>
+          </Card>
+        </div>
+
+        {/* AI Tax Estimator Section */}
+        <div className="pt-4">
+          <Card className="border-sky-500/20 shadow-xl shadow-sky-500/5 relative overflow-hidden bg-gradient-to-br from-card to-card/50">
+            <div className="absolute right-0 top-0 w-64 h-64 bg-sky-500/10 rounded-full blur-[80px] -translate-y-1/2 translate-x-1/2 pointer-events-none" />
+            <div className="absolute left-0 bottom-0 w-64 h-64 bg-indigo-500/10 rounded-full blur-[80px] translate-y-1/2 -translate-x-1/2 pointer-events-none" />
+            
+            <CardHeader className="pb-4 relative z-10 flex flex-col md:flex-row md:items-center justify-between gap-4">
+              <div>
+                <CardTitle className="text-xl flex items-center gap-2">
+                  <Calculator className="w-6 h-6 text-sky-500" />
+                  AI Tax Estimator (PPh 21)
+                </CardTitle>
+                <CardDescription>Predicts your annual income tax and suggests a monthly savings goal.</CardDescription>
+              </div>
+              <div className="flex items-center gap-3 bg-muted/50 p-2 rounded-xl border">
+                <span className="text-sm text-muted-foreground font-medium pl-2">Status:</span>
+                <select 
+                  value={taxStatus}
+                  onChange={(e) => setTaxStatus(e.target.value as any)}
+                  className="bg-background border-none rounded-lg text-sm font-semibold py-1.5 px-3 cursor-pointer outline-none focus:ring-2 focus:ring-sky-500"
+                >
+                  <option value="TK/0">Single (TK/0)</option>
+                  <option value="K/0">Married, 0 Kids (K/0)</option>
+                  <option value="K/1">Married, 1 Kid (K/1)</option>
+                  <option value="K/2">Married, 2 Kids (K/2)</option>
+                  <option value="K/3">Married, 3 Kids (K/3)</option>
+                </select>
+              </div>
+            </CardHeader>
+            <CardContent className="relative z-10 grid md:grid-cols-3 gap-6">
+              <div className="space-y-1 bg-card/60 p-4 rounded-2xl border backdrop-blur-sm">
+                <p className="text-sm font-medium text-muted-foreground">Est. Annual Income</p>
+                <p className="text-2xl font-bold">{formatCurrency(taxData.annualIncome, currency)}</p>
+                <p className="text-xs text-muted-foreground pt-1">Extrapolated from {formatCurrency(baseMonthlyIncome, currency)}/mo</p>
+              </div>
+              
+              <div className="space-y-1 bg-card/60 p-4 rounded-2xl border backdrop-blur-sm">
+                <p className="text-sm font-medium text-muted-foreground">Est. Annual Tax (PPh 21)</p>
+                <p className="text-2xl font-bold text-sky-500">{formatCurrency(taxData.taxAmount, currency)}</p>
+                <p className="text-xs text-muted-foreground pt-1">Non-taxable (PTKP): {taxData.ptkpFormatted}</p>
+              </div>
+
+              <div className="space-y-1 bg-sky-500/10 p-4 rounded-2xl border border-sky-500/20 backdrop-blur-sm shadow-inner">
+                <p className="text-sm font-bold text-sky-600 dark:text-sky-400 flex items-center gap-1">
+                  <BrainCircuit className="w-4 h-4" /> AI Suggestion
+                </p>
+                <p className="text-2xl font-black text-sky-600 dark:text-sky-400">
+                  {formatCurrency(taxData.monthlySaving, currency)} <span className="text-sm font-medium opacity-70">/mo</span>
+                </p>
+                <p className="text-xs text-sky-600/80 dark:text-sky-400/80 pt-1">
+                  Save this amount every month into a dedicated "Tax Wallet" to avoid year-end stress.
+                </p>
+              </div>
             </CardContent>
           </Card>
         </div>

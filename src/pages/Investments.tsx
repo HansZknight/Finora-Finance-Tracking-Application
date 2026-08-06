@@ -1,4 +1,4 @@
-import { useState, useMemo } from "react"
+import { useState, useMemo, useEffect } from "react"
 import { motion, AnimatePresence } from "framer-motion"
 import { formatDistanceToNow, parseISO } from "date-fns"
 import { Plus, TrendingUp, TrendingDown, RefreshCcw, Landmark, Bitcoin, CircleDollarSign, PieChart as PieChartIcon, Crown } from "lucide-react"
@@ -9,6 +9,7 @@ import { formatCurrency } from "@/lib/utils"
 
 import { Button } from "@/components/ui/button"
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card"
+import { Switch } from "@/components/ui/switch"
 import { InvestmentModal } from "@/features/investments/components/InvestmentModal"
 import { UpdatePriceModal } from "@/features/investments/components/UpdatePriceModal"
 
@@ -23,10 +24,13 @@ const getTypeIcon = (type: Investment["type"]) => {
 }
 
 export function Investments() {
-  const { investments, currency, isPro } = useFinance()
+  const { investments, currency, isPro, updateInvestmentPrice, convertCurrency } = useFinance()
   const [isInvestModalOpen, setIsInvestModalOpen] = useState(false)
   const [isUpdatePriceOpen, setIsUpdatePriceOpen] = useState(false)
   const [selectedInvestment, setSelectedInvestment] = useState<Investment | null>(null)
+  
+  const [isLiveSyncActive, setIsLiveSyncActive] = useState(false)
+  const [isSyncing, setIsSyncing] = useState(false)
 
   // Calculate totals
   const { totalInvested, totalCurrentValue, totalProfit, totalRoi } = useMemo(() => {
@@ -65,6 +69,46 @@ export function Investments() {
     setIsUpdatePriceOpen(true)
   }
 
+  // Live Crypto Sync Logic
+  useEffect(() => {
+    if (!isLiveSyncActive || !isPro) return
+
+    const fetchPrices = async () => {
+      setIsSyncing(true)
+      try {
+        const res = await fetch('https://api.binance.com/api/v3/ticker/price')
+        const data = await res.json()
+        
+        investments.forEach(inv => {
+          if (inv.type === 'crypto') {
+            const searchSymbol = inv.symbol.toUpperCase().endsWith('USDT') 
+              ? inv.symbol.toUpperCase() 
+              : `${inv.symbol.toUpperCase()}USDT`
+            
+            const ticker = data.find((t: any) => t.symbol === searchSymbol)
+            if (ticker) {
+              const priceInUsd = parseFloat(ticker.price)
+              const finalPrice = convertCurrency(priceInUsd, "USD", currency)
+              
+              // Only update if changed by at least 0.001 to avoid unnecessary renders
+              if (Math.abs(inv.currentPrice - finalPrice) > 0.001) {
+                 updateInvestmentPrice(inv.id, finalPrice)
+              }
+            }
+          }
+        })
+      } catch(err) {
+        console.error("Failed to fetch live crypto prices", err)
+      } finally {
+        setTimeout(() => setIsSyncing(false), 1000) // Keep the spin animation for a bit
+      }
+    }
+
+    fetchPrices()
+    const interval = setInterval(fetchPrices, 10000) // Update every 10 seconds
+    return () => clearInterval(interval)
+  }, [isLiveSyncActive, isPro]) // Omit investments to avoid recreating interval on every price tick
+
   const isProfitGlobally = totalProfit >= 0
 
   return (
@@ -92,9 +136,26 @@ export function Investments() {
               Track your assets and visualize your wealth growth over time.
             </p>
           </div>
-          <Button onClick={handleAdd} className="bg-gradient-to-r from-primary to-primary/80 hover:from-primary/90 hover:to-primary/70 shadow-lg hover:shadow-primary/25 transition-all duration-300">
-            <Plus className="mr-2 h-4 w-4" /> Add Asset
-          </Button>
+          <div className="flex flex-col sm:flex-row items-center gap-4">
+            {/* Live Sync Toggle */}
+            <div className={`flex items-center gap-3 px-4 py-2 rounded-full border transition-all duration-300 ${isLiveSyncActive ? 'bg-emerald-500/10 border-emerald-500/30' : 'bg-card border-border'}`}>
+              <div className="flex items-center gap-2">
+                <RefreshCcw className={`w-4 h-4 ${isSyncing ? 'animate-spin text-emerald-500' : isLiveSyncActive ? 'text-emerald-500' : 'text-muted-foreground'}`} />
+                <span className={`text-sm font-semibold ${isLiveSyncActive ? 'text-emerald-500' : 'text-muted-foreground'}`}>
+                  Live Crypto Sync
+                </span>
+              </div>
+              <Switch 
+                checked={isLiveSyncActive}
+                onCheckedChange={setIsLiveSyncActive}
+                disabled={!isPro}
+              />
+            </div>
+
+            <Button onClick={handleAdd} className="bg-gradient-to-r from-primary to-primary/80 hover:from-primary/90 hover:to-primary/70 shadow-lg hover:shadow-primary/25 transition-all duration-300 w-full sm:w-auto">
+              <Plus className="mr-2 h-4 w-4" /> Add Asset
+            </Button>
+          </div>
         </div>
         
         {/* Glow Effects */}
@@ -210,9 +271,17 @@ export function Investments() {
                     </div>
 
                     <div className="flex justify-between items-center pt-2">
-                      <p className="text-[10px] text-muted-foreground">
-                        Updated {formatDistanceToNow(parseISO(inv.lastUpdated))} ago
-                      </p>
+                      <div className="flex items-center gap-1.5">
+                        {inv.type === 'crypto' && isLiveSyncActive && (
+                          <span className="relative flex h-2 w-2">
+                            <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-emerald-400 opacity-75"></span>
+                            <span className="relative inline-flex rounded-full h-2 w-2 bg-emerald-500"></span>
+                          </span>
+                        )}
+                        <p className="text-[10px] text-muted-foreground">
+                          {inv.type === 'crypto' && isLiveSyncActive ? 'Live Market' : `Updated ${formatDistanceToNow(parseISO(inv.lastUpdated))} ago`}
+                        </p>
+                      </div>
                       <Button 
                         size="sm" 
                         variant="ghost" 
