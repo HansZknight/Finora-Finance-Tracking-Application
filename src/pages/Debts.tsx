@@ -77,13 +77,13 @@ export function Debts() {
             <Plus className="mr-2 h-4 w-4" /> Add Debt
           </Button>
         </div>
-        <div className="absolute right-0 top-0 -mt-16 -mr-16 h-64 w-64 rounded-full bg-destructive/10 blur-3xl" />
-        <div className="absolute bottom-0 left-1/2 h-32 w-64 -translate-x-1/2 rounded-full bg-primary/5 blur-3xl" />
+        <div className="hidden sm:block absolute right-0 top-0 -mt-16 -mr-16 h-64 w-64 rounded-full bg-destructive/10 blur-3xl" />
+        <div className="hidden sm:block absolute bottom-0 left-1/2 h-32 w-64 -translate-x-1/2 rounded-full bg-primary/5 blur-3xl" />
       </div>
 
       <div className="grid gap-4 md:grid-cols-3">
-        <Card className="bg-card/40 backdrop-blur-xl border-destructive/10 shadow-lg relative overflow-hidden transition-all duration-500 hover:shadow-destructive/20 hover:-translate-y-1 group">
-          <div className="absolute top-0 right-0 w-32 h-32 bg-destructive/10 rounded-full blur-3xl -translate-y-1/2 translate-x-1/2 group-hover:bg-destructive/20 transition-all duration-500" />
+        <Card className="bg-card sm:bg-card/40 sm:backdrop-blur-xl border-destructive/10 shadow-lg relative overflow-hidden transition-all duration-500 hover:shadow-destructive/20 hover:-translate-y-1 group">
+          <div className="hidden sm:block absolute top-0 right-0 w-32 h-32 bg-destructive/10 rounded-full blur-3xl -translate-y-1/2 translate-x-1/2 group-hover:bg-destructive/20 transition-all duration-500" />
           <CardContent className="p-6 relative z-10">
             <div className="flex justify-between items-start">
               <div>
@@ -97,8 +97,8 @@ export function Debts() {
           </CardContent>
         </Card>
         
-        <Card className="bg-card/40 backdrop-blur-xl border-emerald-500/10 shadow-lg relative overflow-hidden transition-all duration-500 hover:shadow-emerald-500/20 hover:-translate-y-1 group">
-          <div className="absolute top-0 right-0 w-32 h-32 bg-emerald-500/10 rounded-full blur-3xl -translate-y-1/2 translate-x-1/2 group-hover:bg-emerald-500/20 transition-all duration-500" />
+        <Card className="bg-card sm:bg-card/40 sm:backdrop-blur-xl border-emerald-500/10 shadow-lg relative overflow-hidden transition-all duration-500 hover:shadow-emerald-500/20 hover:-translate-y-1 group">
+          <div className="hidden sm:block absolute top-0 right-0 w-32 h-32 bg-emerald-500/10 rounded-full blur-3xl -translate-y-1/2 translate-x-1/2 group-hover:bg-emerald-500/20 transition-all duration-500" />
           <CardContent className="p-6 relative z-10">
             <div className="flex justify-between items-start">
               <div>
@@ -112,8 +112,8 @@ export function Debts() {
           </CardContent>
         </Card>
 
-        <Card className="bg-card/40 backdrop-blur-xl border-primary/10 shadow-lg relative overflow-hidden transition-all duration-500 hover:shadow-primary/20 hover:-translate-y-1 group">
-          <div className="absolute top-0 right-0 w-32 h-32 bg-primary/10 rounded-full blur-3xl -translate-y-1/2 translate-x-1/2 group-hover:bg-primary/20 transition-all duration-500" />
+        <Card className="bg-card sm:bg-card/40 sm:backdrop-blur-xl border-primary/10 shadow-lg relative overflow-hidden transition-all duration-500 hover:shadow-primary/20 hover:-translate-y-1 group">
+          <div className="hidden sm:block absolute top-0 right-0 w-32 h-32 bg-primary/10 rounded-full blur-3xl -translate-y-1/2 translate-x-1/2 group-hover:bg-primary/20 transition-all duration-500" />
           <CardContent className="p-6 relative z-10">
             <div className="flex justify-between items-start mb-4">
               <div>
@@ -130,7 +130,7 @@ export function Debts() {
       </div>
 
       {!debts || debts.length === 0 ? (
-        <Card className="border-dashed border-2 shadow-none bg-card/20 backdrop-blur-sm">
+        <Card className="border-dashed border-2 shadow-none bg-card/20 sm:backdrop-blur-sm">
           <CardContent className="flex flex-col items-center justify-center p-12 text-center">
             <div className="h-20 w-20 bg-gradient-to-br from-primary/20 to-primary/5 rounded-full flex items-center justify-center mb-6 ring-2 ring-primary/10">
               <CreditCard className="h-10 w-10 text-primary/60" />

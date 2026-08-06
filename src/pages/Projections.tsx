@@ -282,7 +282,7 @@ export function Projections() {
     if (active && payload && payload.length) {
       const data = payload[0].payload
       return (
-        <div className="bg-background/90 backdrop-blur-md border border-border p-3 rounded-lg shadow-xl min-w-[200px]">
+        <div className="bg-background/90 sm:backdrop-blur-md border border-border p-3 rounded-lg shadow-xl min-w-[200px]">
           <p className="text-sm font-medium mb-2 border-b pb-1">{label}</p>
           <div className="space-y-1">
             <div className="flex justify-between text-xs">
@@ -331,7 +331,7 @@ export function Projections() {
 
       <div className="grid gap-6 md:grid-cols-3">
         <Card className="md:col-span-2 relative overflow-hidden bg-gradient-to-br from-background via-background to-muted/30">
-          <div className="absolute top-0 left-0 w-64 h-64 bg-primary/5 rounded-full blur-3xl -translate-y-1/2 -translate-x-1/2 pointer-events-none" />
+          <div className="hidden sm:block absolute top-0 left-0 w-64 h-64 bg-primary/5 rounded-full blur-3xl -translate-y-1/2 -translate-x-1/2 pointer-events-none" />
           <CardHeader>
             <CardTitle>6-Month Forecast</CardTitle>
             <CardDescription>Estimated balance assuming you don't change your spending habits.</CardDescription>
@@ -538,7 +538,7 @@ export function Projections() {
           </Card>
 
           <Card className="border-amber-500/20 shadow-lg relative overflow-hidden group">
-            <div className="absolute right-0 top-0 w-32 h-32 bg-amber-500/5 rounded-full blur-3xl" />
+            <div className="hidden sm:block absolute right-0 top-0 w-32 h-32 bg-amber-500/5 rounded-full blur-3xl" />
             <CardHeader className="pb-2 relative z-10">
               <CardTitle className="text-lg flex items-center gap-2">
                 <ShieldAlert className="w-5 h-5 text-amber-500" />
@@ -578,7 +578,7 @@ export function Projections() {
               {aiInsights.map((insight, idx) => (
                 <div 
                   key={idx} 
-                  className={`flex items-start gap-3 p-4 rounded-xl border backdrop-blur-sm ${
+                  className={`flex items-start gap-3 p-4 rounded-xl border sm:backdrop-blur-sm ${
                     insight.type === 'danger' ? 'bg-destructive/10 border-destructive/20 text-destructive-foreground' :
                     insight.type === 'warning' ? 'bg-amber-500/10 border-amber-500/20 text-amber-600 dark:text-amber-400' :
                     'bg-emerald-500/10 border-emerald-500/20 text-emerald-600 dark:text-emerald-400'
@@ -598,8 +598,8 @@ export function Projections() {
         {/* AI Tax Estimator Section */}
         <div className="pt-4">
           <Card className="border-sky-500/20 shadow-xl shadow-sky-500/5 relative overflow-hidden bg-gradient-to-br from-card to-card/50">
-            <div className="absolute right-0 top-0 w-64 h-64 bg-sky-500/10 rounded-full blur-[80px] -translate-y-1/2 translate-x-1/2 pointer-events-none" />
-            <div className="absolute left-0 bottom-0 w-64 h-64 bg-indigo-500/10 rounded-full blur-[80px] translate-y-1/2 -translate-x-1/2 pointer-events-none" />
+            <div className="hidden sm:block absolute right-0 top-0 w-64 h-64 bg-sky-500/10 rounded-full blur-[80px] -translate-y-1/2 translate-x-1/2 pointer-events-none" />
+            <div className="hidden sm:block absolute left-0 bottom-0 w-64 h-64 bg-indigo-500/10 rounded-full blur-[80px] translate-y-1/2 -translate-x-1/2 pointer-events-none" />
             
             <CardHeader className="pb-4 relative z-10 flex flex-col md:flex-row md:items-center justify-between gap-4">
               <div>
@@ -625,19 +625,19 @@ export function Projections() {
               </div>
             </CardHeader>
             <CardContent className="relative z-10 grid md:grid-cols-3 gap-6">
-              <div className="space-y-1 bg-card/60 p-4 rounded-2xl border backdrop-blur-sm">
+              <div className="space-y-1 bg-card/60 p-4 rounded-2xl border sm:backdrop-blur-sm">
                 <p className="text-sm font-medium text-muted-foreground">Est. Annual Income</p>
                 <p className="text-2xl font-bold">{formatCurrency(taxData.annualIncome, currency)}</p>
                 <p className="text-xs text-muted-foreground pt-1">Extrapolated from {formatCurrency(baseMonthlyIncome, currency)}/mo</p>
               </div>
               
-              <div className="space-y-1 bg-card/60 p-4 rounded-2xl border backdrop-blur-sm">
+              <div className="space-y-1 bg-card/60 p-4 rounded-2xl border sm:backdrop-blur-sm">
                 <p className="text-sm font-medium text-muted-foreground">Est. Annual Tax (PPh 21)</p>
                 <p className="text-2xl font-bold text-sky-500">{formatCurrency(taxData.taxAmount, currency)}</p>
                 <p className="text-xs text-muted-foreground pt-1">Non-taxable (PTKP): {taxData.ptkpFormatted}</p>
               </div>
 
-              <div className="space-y-1 bg-sky-500/10 p-4 rounded-2xl border border-sky-500/20 backdrop-blur-sm shadow-inner">
+              <div className="space-y-1 bg-sky-500/10 p-4 rounded-2xl border border-sky-500/20 sm:backdrop-blur-sm shadow-inner">
                 <p className="text-sm font-bold text-sky-600 dark:text-sky-400 flex items-center gap-1">
                   <BrainCircuit className="w-4 h-4" /> AI Suggestion
                 </p>

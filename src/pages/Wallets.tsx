@@ -91,8 +91,8 @@ export function Wallets() {
             <Plus className="mr-2 h-4 w-4" /> Add Wallet {!isPro && wallets.length >= 2 && <Crown className="w-3 h-3 ml-2 text-amber-300" />}
           </Button>
         </div>
-        <div className="absolute right-0 top-0 -mt-16 -mr-16 h-64 w-64 rounded-full bg-indigo-500/10 blur-3xl" />
-        <div className="absolute bottom-0 left-1/2 h-32 w-64 -translate-x-1/2 rounded-full bg-primary/5 blur-3xl" />
+        <div className="hidden sm:block absolute right-0 top-0 -mt-16 -mr-16 h-64 w-64 rounded-full bg-indigo-500/10 blur-3xl" />
+        <div className="hidden sm:block absolute bottom-0 left-1/2 h-32 w-64 -translate-x-1/2 rounded-full bg-primary/5 blur-3xl" />
       </div>
 
       <div className="grid gap-6 md:grid-cols-2 lg:grid-cols-3">
@@ -111,13 +111,13 @@ export function Wallets() {
                 transition={{ duration: 0.3, delay: index * 0.05 }}
               >
                 <Card 
-                  className="flex flex-col group overflow-hidden bg-card/40 backdrop-blur-xl shadow-lg transition-all duration-500 hover:shadow-xl hover:-translate-y-1 relative border-white/5 cursor-pointer"
+                  className="flex flex-col group overflow-hidden bg-card sm:bg-card/40 sm:backdrop-blur-xl shadow-lg transition-all duration-500 hover:shadow-xl hover:-translate-y-1 relative border-white/5 cursor-pointer"
                   onClick={() => handleEdit(wallet)}
                 >
                   <div className="h-1.5 w-full" style={{ backgroundColor: displayColor }} />
                   
                   <div 
-                    className="absolute top-0 right-0 w-40 h-40 rounded-full blur-3xl -translate-y-1/2 translate-x-1/4 opacity-10 group-hover:opacity-30 transition-opacity duration-700"
+                    className="hidden sm:block absolute top-0 right-0 w-40 h-40 rounded-full blur-3xl -translate-y-1/2 translate-x-1/4 opacity-10 group-hover:opacity-30 transition-opacity duration-700"
                     style={{ backgroundColor: displayColor }}
                   />
 

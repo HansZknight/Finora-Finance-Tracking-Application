@@ -1,8 +1,9 @@
-import { Printer } from "lucide-react"
+import React, { Suspense } from "react"
+import { Printer, Loader2 } from "lucide-react"
 import { Button } from "@/components/ui/button"
 import { SummaryCards } from "@/features/dashboard/components/SummaryCards"
-import { ExpenseChart } from "@/features/dashboard/components/ExpenseChart"
-import { IncomeExpenseChart } from "@/features/dashboard/components/IncomeExpenseChart"
+const ExpenseChart = React.lazy(() => import("@/features/dashboard/components/ExpenseChart").then(m => ({ default: m.ExpenseChart })))
+const IncomeExpenseChart = React.lazy(() => import("@/features/dashboard/components/IncomeExpenseChart").then(m => ({ default: m.IncomeExpenseChart })))
 import { RecentTransactions } from "@/features/dashboard/components/RecentTransactions"
 import { SmartInsights } from "@/features/dashboard/components/SmartInsights"
 import { FinancialHealthCard } from "@/features/dashboard/components/FinancialHealthCard"
@@ -38,8 +39,8 @@ export function Dashboard() {
             <Printer className="mr-2 h-4 w-4" /> {t('dashboard.printReport')}
           </Button>
         </div>
-        <div className="absolute right-0 top-0 -mt-16 -mr-16 h-64 w-64 rounded-full bg-primary/10 blur-3xl" />
-        <div className="absolute bottom-0 left-1/2 h-32 w-64 -translate-x-1/2 rounded-full bg-accent/10 blur-3xl" />
+        <div className="hidden sm:block absolute right-0 top-0 -mt-16 -mr-16 h-64 w-64 rounded-full bg-primary/10 blur-3xl" />
+        <div className="hidden sm:block absolute bottom-0 left-1/2 h-32 w-64 -translate-x-1/2 rounded-full bg-accent/10 blur-3xl" />
       </div>
       
       <SmartInsights />
@@ -47,8 +48,21 @@ export function Dashboard() {
       <SummaryCards />
 
       <div className="grid gap-4 grid-cols-1 md:grid-cols-2 lg:grid-cols-3">
-        <IncomeExpenseChart />
-        <ExpenseChart />
+        <Suspense fallback={
+          <div className="md:col-span-1 lg:col-span-2 h-[300px] flex items-center justify-center bg-card/40 rounded-xl border">
+            <Loader2 className="w-8 h-8 animate-spin text-primary/50" />
+          </div>
+        }>
+          <IncomeExpenseChart />
+        </Suspense>
+        
+        <Suspense fallback={
+          <div className="h-[300px] flex items-center justify-center bg-card/40 rounded-xl border">
+            <Loader2 className="w-8 h-8 animate-spin text-primary/50" />
+          </div>
+        }>
+          <ExpenseChart />
+        </Suspense>
       </div>
 
       <div className="grid gap-4 grid-cols-1 lg:grid-cols-3">

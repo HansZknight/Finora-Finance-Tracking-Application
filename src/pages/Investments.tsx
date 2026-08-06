@@ -159,11 +159,11 @@ export function Investments() {
         </div>
         
         {/* Glow Effects */}
-        <div className="absolute right-0 top-0 -mt-16 -mr-16 h-64 w-64 rounded-full bg-indigo-500/10 blur-3xl" />
+        <div className="hidden sm:block absolute right-0 top-0 -mt-16 -mr-16 h-64 w-64 rounded-full bg-indigo-500/10 blur-3xl" />
       </div>
 
       <div className="grid gap-6 md:grid-cols-3">
-        <Card className="bg-card/40 backdrop-blur-xl border border-white/5 shadow-lg relative overflow-hidden">
+        <Card className="bg-card sm:bg-card/40 sm:backdrop-blur-xl border border-white/5 shadow-lg relative overflow-hidden">
           <CardHeader className="pb-2">
             <CardTitle className="text-sm font-medium text-muted-foreground">Total Invested (Capital)</CardTitle>
           </CardHeader>
@@ -174,7 +174,7 @@ export function Investments() {
           </CardContent>
         </Card>
 
-        <Card className="bg-card/40 backdrop-blur-xl border border-white/5 shadow-lg relative overflow-hidden">
+        <Card className="bg-card sm:bg-card/40 sm:backdrop-blur-xl border border-white/5 shadow-lg relative overflow-hidden">
           <CardHeader className="pb-2">
             <CardTitle className="text-sm font-medium text-muted-foreground">Current Portfolio Value</CardTitle>
           </CardHeader>
@@ -185,8 +185,8 @@ export function Investments() {
           </CardContent>
         </Card>
 
-        <Card className={`bg-card/40 backdrop-blur-xl shadow-lg relative overflow-hidden border-2 ${isProfitGlobally ? "border-emerald-500/20" : "border-destructive/20"}`}>
-          <div className={`absolute top-0 right-0 w-32 h-32 rounded-full blur-3xl -translate-y-1/2 translate-x-1/4 opacity-20 ${isProfitGlobally ? "bg-emerald-500" : "bg-destructive"}`} />
+        <Card className={`bg-card sm:bg-card/40 sm:backdrop-blur-xl shadow-lg relative overflow-hidden border-2 ${isProfitGlobally ? "border-emerald-500/20" : "border-destructive/20"}`}>
+          <div className={`hidden sm:block absolute top-0 right-0 w-32 h-32 rounded-full blur-3xl -translate-y-1/2 translate-x-1/4 opacity-20 ${isProfitGlobally ? "bg-emerald-500" : "bg-destructive"}`} />
           <CardHeader className="pb-2 relative z-10">
             <CardTitle className="text-sm font-medium text-muted-foreground">Total Profit / Loss</CardTitle>
           </CardHeader>
@@ -221,13 +221,13 @@ export function Investments() {
                 transition={{ duration: 0.3, delay: index * 0.05 }}
               >
                 <Card 
-                  className="flex flex-col h-full group overflow-hidden bg-card/40 backdrop-blur-xl shadow-lg transition-all duration-500 hover:shadow-xl hover:-translate-y-1 relative border-white/5 cursor-pointer"
+                  className="flex flex-col h-full group overflow-hidden bg-card sm:bg-card/40 sm:backdrop-blur-xl shadow-lg transition-all duration-500 hover:shadow-xl hover:-translate-y-1 relative border-white/5 cursor-pointer"
                   onClick={() => handleEdit(inv)}
                 >
                   <div className="h-1.5 w-full transition-colors duration-500" style={{ backgroundColor: isProfit ? displayColor : '#ef4444' }} />
                   
                   <div 
-                    className="absolute top-0 right-0 w-32 h-32 rounded-full blur-3xl -translate-y-1/2 translate-x-1/4 opacity-10 group-hover:opacity-20 transition-opacity duration-700"
+                    className="hidden sm:block absolute top-0 right-0 w-32 h-32 rounded-full blur-3xl -translate-y-1/2 translate-x-1/4 opacity-10 group-hover:opacity-20 transition-opacity duration-700"
                     style={{ backgroundColor: isProfit ? displayColor : '#ef4444' }}
                   />
 
