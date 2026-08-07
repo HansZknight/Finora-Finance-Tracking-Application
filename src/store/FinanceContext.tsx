@@ -278,6 +278,9 @@ export function FinanceProvider({ children }: { children: React.ReactNode }) {
               ...t,
               id: `txn_rec_${Date.now()}_${Math.random().toString(36).substr(2, 9)}`,
               date: currentNextDate.toISOString(),
+              isRecurring: false,
+              recurringFrequency: undefined,
+              nextRecurringDate: undefined
             }
             newTransactions.push(clonedTxn)
             
