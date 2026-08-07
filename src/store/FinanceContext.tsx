@@ -183,6 +183,12 @@ export function FinanceProvider({ children }: { children: React.ReactNode }) {
 
     const { data: { subscription } } = supabase.auth.onAuthStateChange((_event, session) => {
       setUser(session?.user ?? null)
+      
+      // Clean up ugly OAuth tokens from URL
+      if (session?.user && window.location.hash.includes('access_token=')) {
+        window.history.replaceState(null, '', window.location.pathname + window.location.search);
+      }
+
       if (session?.user) {
         // Fetch cloud backup on login
         setSyncStatus('syncing')

@@ -1,6 +1,6 @@
 import React from 'react'
 import { Outlet, NavLink } from 'react-router-dom'
-import { LayoutDashboard, Receipt, PieChart, Target, Settings, Tags, Repeat, CreditCard, LineChart, Wallet, TrendingUp, Download, Plus, Users, Plane } from 'lucide-react'
+import { LayoutDashboard, Receipt, PieChart, Target, Settings, Tags, Repeat, CreditCard, LineChart, Wallet, TrendingUp, Download, Plus, Users, Plane, LogOut } from 'lucide-react'
 import { cn } from '@/lib/utils'
 import { useTranslation } from 'react-i18next'
 
@@ -8,6 +8,8 @@ import { CommandPalette } from '@/components/CommandPalette'
 import { usePWAInstall } from '@/hooks/usePWAInstall'
 import { useFinance } from '@/store/FinanceContext'
 import { MobileNavBar } from './MobileNavBar'
+import { supabase } from '@/lib/supabase'
+import { toast } from 'sonner'
 
 function TravelModeBanner() {
   const { t } = useTranslation()
@@ -115,6 +117,17 @@ export function AppLayout() {
     )
   }
 
+  const handleLogout = async () => {
+    try {
+      await supabase.auth.signOut()
+      localStorage.removeItem('finora_skip_login')
+      toast.success("Logged out successfully")
+      window.location.href = '/'
+    } catch (error) {
+      toast.error("Failed to logout")
+    }
+  }
+
   return (
     <div className="flex h-[100dvh] w-full bg-background relative overflow-hidden">
       {/* Background Ambient Mesh - Hidden on mobile for performance */}
@@ -165,8 +178,8 @@ export function AppLayout() {
           ))}
         </nav>
 
-        {isInstallable && (
-          <div className="mt-auto pt-4 px-2">
+        <div className="mt-auto flex flex-col gap-3 pt-4 px-2">
+          {isInstallable && (
             <button
               onClick={promptInstall}
               className="flex w-full items-center justify-center gap-2 rounded-xl bg-gradient-to-r from-indigo-500 to-primary px-4 py-3 text-sm font-bold text-white shadow-lg hover:shadow-primary/25 transition-all duration-300 hover:scale-[1.02] active:scale-[0.98]"
@@ -174,8 +187,16 @@ export function AppLayout() {
               <Download className="h-4 w-4" />
               Install App
             </button>
-          </div>
-        )}
+          )}
+          
+          <button
+            onClick={handleLogout}
+            className="flex w-full items-center gap-3 rounded-full px-4 py-3 text-sm font-medium transition-all duration-200 text-destructive hover:bg-destructive/10"
+          >
+            <LogOut className="h-4 w-4" />
+            Logout
+          </button>
+        </div>
       </aside>
 
       {/* Main Content Area */}
@@ -191,13 +212,23 @@ export function AppLayout() {
             <span className="text-xl font-bold bg-gradient-to-br from-foreground to-foreground/70 bg-clip-text text-transparent">Finora</span>
           </div>
           
-          <button 
-            onClick={triggerCommandPalette}
-            className="p-2.5 bg-muted/50 text-muted-foreground hover:bg-muted rounded-full transition-colors flex items-center justify-center shadow-sm"
-            aria-label="Search"
-          >
-            <span className="w-5 h-5 flex items-center justify-center leading-none text-base">🔍</span>
-          </button>
+          <div className="flex items-center gap-2">
+            <button 
+              onClick={triggerCommandPalette}
+              className="p-2.5 bg-muted/50 text-muted-foreground hover:bg-muted rounded-full transition-colors flex items-center justify-center shadow-sm"
+              aria-label="Search"
+            >
+              <span className="w-5 h-5 flex items-center justify-center leading-none text-base">🔍</span>
+            </button>
+            
+            <button 
+              onClick={handleLogout}
+              className="p-2.5 text-destructive hover:bg-destructive/10 rounded-full transition-colors flex items-center justify-center"
+              aria-label="Logout"
+            >
+              <LogOut className="w-5 h-5" />
+            </button>
+          </div>
         </header>
 
         {/* Scrollable Content */}
