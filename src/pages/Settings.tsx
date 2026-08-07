@@ -1,8 +1,8 @@
 import { useState } from "react"
-import { Download, Upload, Trash2, AlertTriangle, Moon, Sun, Monitor, Lock, Fingerprint, Key, Crown } from "lucide-react"
+import { Download, Upload, Trash2, AlertTriangle, Moon, Sun, Monitor, Lock, Fingerprint, Key, Crown, Cloud, CloudOff, RefreshCw } from "lucide-react"
 import { toast } from "sonner"
 import { registerBiometric } from "@/lib/webauthn"
-
+import { supabase } from "@/lib/supabase"
 
 import { useFinance } from "@/store/FinanceContext"
 import { AppStateSchema } from "@/types"
@@ -21,16 +21,45 @@ import {
   AlertDialogTitle,
   AlertDialogTrigger,
 } from "@/components/ui/alert-dialog"
-
+import { Input } from "@/components/ui/input"
+import { Label } from "@/components/ui/label"
 
 import { useTranslation } from "react-i18next"
 
 export function Settings() {
   const { t, i18n } = useTranslation()
-  const { theme, setTheme, currency, setCurrency, isBiometricEnabled, enableBiometric, disableBiometric, isPro, activatePro } = useFinance()
+  const { theme, setTheme, currency, setCurrency, isBiometricEnabled, enableBiometric, disableBiometric, isPro, activatePro, user, syncStatus } = useFinance()
   const [importStatus, setImportStatus] = useState<"idle" | "success" | "error">("idle")
   const [isRegisteringBiometric, setIsRegisteringBiometric] = useState(false)
   const [licenseInput, setLicenseInput] = useState("")
+
+  // Auth State
+  const [email, setEmail] = useState("")
+  const [password, setPassword] = useState("")
+  const [isAuthLoading, setIsAuthLoading] = useState(false)
+
+  const handleLogin = async (e: React.FormEvent) => {
+    e.preventDefault()
+    setIsAuthLoading(true)
+    const { error } = await supabase.auth.signInWithPassword({ email, password })
+    setIsAuthLoading(false)
+    if (error) toast.error(error.message)
+    else toast.success("Logged in successfully. Sync active.")
+  }
+
+  const handleRegister = async () => {
+    if (!email || !password) return toast.error("Please enter email and password")
+    setIsAuthLoading(true)
+    const { error } = await supabase.auth.signUp({ email, password })
+    setIsAuthLoading(false)
+    if (error) toast.error(error.message)
+    else toast.success("Account created successfully. You can now login.")
+  }
+
+  const handleLogout = async () => {
+    await supabase.auth.signOut()
+    toast.success("Logged out. Cloud sync stopped.")
+  }
 
   const handleExportJSON = () => {
     const data = localStorage.getItem(STORAGE_KEY)
@@ -200,6 +229,72 @@ export function Settings() {
                   </svg>
                 </div>
               </div>
+            </CardContent>
+          </Card>
+
+          <Card className={user ? "border-primary/50 bg-primary/5" : ""}>
+            <CardHeader>
+              <CardTitle className="flex items-center gap-2">
+                {user ? <Cloud className="h-5 w-5 text-primary" /> : <CloudOff className="h-5 w-5 text-muted-foreground" />}
+                Cloud Sync & Backup
+              </CardTitle>
+              <CardDescription>
+                {user 
+                  ? "Your data is automatically synced to the cloud."
+                  : "Login to securely sync your data across devices automatically."}
+              </CardDescription>
+            </CardHeader>
+            <CardContent>
+              {user ? (
+                <div className="space-y-4">
+                  <div className="flex items-center justify-between bg-background p-3 rounded-md border">
+                    <div className="flex flex-col">
+                      <span className="text-sm font-medium">Logged in as</span>
+                      <span className="text-xs text-muted-foreground">{user.email}</span>
+                    </div>
+                    <div className="flex items-center gap-2">
+                      <span className="text-xs text-muted-foreground flex items-center gap-1">
+                        {syncStatus === 'syncing' && <RefreshCw className="h-3 w-3 animate-spin" />}
+                        {syncStatus === 'syncing' ? 'Syncing...' : syncStatus === 'success' ? 'Synced' : syncStatus === 'error' ? 'Sync Error' : 'Idle'}
+                      </span>
+                    </div>
+                  </div>
+                  <Button variant="outline" onClick={handleLogout} className="w-full">
+                    Logout & Stop Sync
+                  </Button>
+                </div>
+              ) : (
+                <form onSubmit={handleLogin} className="space-y-4">
+                  <div className="space-y-2">
+                    <Label>Email</Label>
+                    <Input 
+                      type="email" 
+                      placeholder="you@example.com" 
+                      value={email}
+                      onChange={(e) => setEmail(e.target.value)}
+                      required
+                    />
+                  </div>
+                  <div className="space-y-2">
+                    <Label>Password</Label>
+                    <Input 
+                      type="password" 
+                      placeholder="••••••••" 
+                      value={password}
+                      onChange={(e) => setPassword(e.target.value)}
+                      required
+                    />
+                  </div>
+                  <div className="flex gap-2">
+                    <Button type="submit" className="flex-1" disabled={isAuthLoading}>
+                      {isAuthLoading ? "..." : "Login"}
+                    </Button>
+                    <Button type="button" variant="outline" className="flex-1" disabled={isAuthLoading} onClick={handleRegister}>
+                      Register
+                    </Button>
+                  </div>
+                </form>
+              )}
             </CardContent>
           </Card>
         </div>

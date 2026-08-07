@@ -8,10 +8,11 @@ import '@fontsource/plus-jakarta-sans/800.css'
 import App from './App.tsx'
 import './index.css'
 import './lib/i18n' // Import i18n configuration
+// @ts-ignore
 import { registerSW } from 'virtual:pwa-register'
 
 // Automatically check for updates every hour, and immediately on load
-const updateSW = registerSW({
+registerSW({
   onNeedRefresh() {
     // Force a reload when an update is available
     window.location.reload()

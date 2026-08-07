@@ -3,8 +3,12 @@ import { AppStateSchema } from '@/types'
 import type { AppState, Transaction, Category, Goal, Budget, Debt, Wallet, Investment, Contact, Trip } from '@/types'
 import { getItem, setItem, STORAGE_KEY } from '@/services/storage'
 import { DEFAULT_CATEGORIES } from '@/constants/defaults'
+import { supabase } from '@/lib/supabase'
+import type { User } from '@supabase/supabase-js'
 
 interface FinanceContextType extends AppState {
+  user: User | null
+  syncStatus: 'idle' | 'syncing' | 'error' | 'success'
   exchangeRates: Record<string, number>
   convertCurrency: (amount: number, fromCurrency: string, toCurrency: string) => number
   // Actions
@@ -88,6 +92,9 @@ export function FinanceProvider({ children }: { children: React.ReactNode }) {
     return defaultState
   })
 
+  const [user, setUser] = useState<User | null>(null)
+  const [syncStatus, setSyncStatus] = useState<'idle' | 'syncing' | 'error' | 'success'>('idle')
+
   const [exchangeRates, setExchangeRates] = useState<Record<string, number>>(() => {
     const cached = localStorage.getItem('finora-rates')
     if (cached) {
@@ -157,10 +164,83 @@ export function FinanceProvider({ children }: { children: React.ReactNode }) {
     }
   }, [state.wallets, state.transactions.length])
 
-  // Persist state changes
+  // Persist state changes locally
   useEffect(() => {
     setItem(STORAGE_KEY, state)
   }, [state])
+
+  // Handle Supabase Auth
+  useEffect(() => {
+    supabase.auth.getSession().then(({ data: { session } }) => {
+      setUser(session?.user ?? null)
+    })
+
+    const { data: { subscription } } = supabase.auth.onAuthStateChange((_event, session) => {
+      setUser(session?.user ?? null)
+      if (session?.user) {
+        // Fetch cloud backup on login
+        setSyncStatus('syncing')
+        supabase
+          .from('user_backups')
+          .select('app_state')
+          .eq('user_id', session.user.id)
+          .single()
+          .then((res) => {
+            if (res.error) {
+              setSyncStatus('error')
+              return
+            }
+            const data = res.data
+            if (data && data.app_state) {
+              // Validate and apply cloud state
+              const parsed = AppStateSchema.safeParse(data.app_state)
+              if (parsed.success) {
+                // To avoid overwriting existing local data silently, 
+                // we'll only restore if the cloud data has more transactions,
+                // or if local is basically empty.
+                setState(prev => {
+                  if (parsed.data.transactions.length >= prev.transactions.length) {
+                    return parsed.data
+                  }
+                  return prev
+                })
+              }
+            }
+            setSyncStatus('success')
+            setTimeout(() => setSyncStatus('idle'), 3000)
+          })
+      }
+    })
+
+    return () => subscription.unsubscribe()
+  }, [])
+
+  // Auto-sync to Cloud (Debounced)
+  useEffect(() => {
+    if (!user) return;
+
+    setSyncStatus('syncing')
+    const timer = setTimeout(async () => {
+      const { error } = await supabase
+        .from('user_backups')
+        .upsert({
+          user_id: user.id,
+          app_state: state,
+          updated_at: new Date().toISOString()
+        }, { onConflict: 'user_id' })
+      
+      if (error) {
+        console.error('Failed to sync to cloud:', error)
+        setSyncStatus('error')
+      } else {
+        setSyncStatus('success')
+        setTimeout(() => setSyncStatus('idle'), 3000)
+      }
+    }, 3000) // 3 seconds debounce
+
+    return () => clearTimeout(timer)
+  }, [state, user])
+
 
   // Theme effect
   useEffect(() => {
@@ -450,6 +530,9 @@ export function FinanceProvider({ children }: { children: React.ReactNode }) {
   return (
     <FinanceContext.Provider value={{
       ...state,
+      user,
+      syncStatus,
+      exchangeRates,
       addWallet,
       updateWallet,
       deleteWallet,
@@ -483,7 +566,6 @@ export function FinanceProvider({ children }: { children: React.ReactNode }) {
       enableBiometric,
       disableBiometric,
       activatePro,
-      exchangeRates,
       convertCurrency
     }}>
       {children}
