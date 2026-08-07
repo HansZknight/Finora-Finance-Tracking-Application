@@ -134,13 +134,8 @@ export function AppLayout() {
       localStorage.removeItem('finora_skip_login')
       toast.success("Logged out successfully")
       
-      // Go back to the very first history entry in the PWA so the back button exits natively
-      window.history.go(-window.history.length)
-      
-      // After a short delay, force reload to clear all states and show login page
-      setTimeout(() => {
-        window.location.replace('/')
-      }, 100)
+      // Force reload to clear all states and show login page, replacing current history
+      window.location.replace('/')
     } catch (error) {
       toast.error("Failed to logout")
     }
