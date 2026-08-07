@@ -58,7 +58,9 @@ export function Settings() {
 
   const handleLogout = async () => {
     await supabase.auth.signOut()
-    toast.success("Logged out. Cloud sync stopped.")
+    localStorage.removeItem('finora_skip_login')
+    toast.success("Logged out successfully")
+    window.location.href = '/' // Force reload to show login page
   }
 
   const handleExportJSON = () => {

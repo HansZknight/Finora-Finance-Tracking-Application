@@ -1,3 +1,4 @@
+import { useState } from 'react'
 import { BrowserRouter, Routes, Route } from 'react-router-dom'
 import { AppLayout } from '@/components/layout/AppLayout'
 import { Dashboard } from '@/pages/Dashboard'
@@ -13,38 +14,56 @@ import { Wallets } from '@/pages/Wallets'
 import { Investments } from '@/pages/Investments'
 import { Contacts } from '@/pages/Contacts'
 import { Trips } from '@/pages/Trips'
-import { FinanceProvider } from '@/store/FinanceContext'
+import { FinanceProvider, useFinance } from '@/store/FinanceContext'
 import { Preloader } from '@/components/layout/Preloader'
 import { BiometricLockScreen } from '@/components/auth/BiometricLockScreen'
-
+import { LoginPage } from '@/pages/LoginPage'
 import { Toaster } from 'sonner'
+
+function AppContent() {
+  const { user } = useFinance()
+  const [skipLogin, setSkipLogin] = useState(() => localStorage.getItem('finora_skip_login') === 'true')
+
+  const handleSkip = () => {
+    localStorage.setItem('finora_skip_login', 'true')
+    setSkipLogin(true)
+  }
+
+  if (!user && !skipLogin) {
+    return <LoginPage onSkip={handleSkip} />
+  }
+
+  return (
+    <BrowserRouter>
+      <Routes>
+        <Route element={<AppLayout />}>
+          <Route path="/" element={<Dashboard />} />
+          <Route path="/projections" element={<Projections />} />
+          <Route path="/transactions" element={<Transactions />} />
+          <Route path="/wallets" element={<Wallets />} />
+          <Route path="/investments" element={<Investments />} />
+          <Route path="/categories" element={<Categories />} />
+          <Route path="/goals" element={<Goals />} />
+          <Route path="/budget" element={<Budget />} />
+          <Route path="/debts" element={<Debts />} />
+          <Route path="/contacts" element={<Contacts />} />
+          <Route path="/trips" element={<Trips />} />
+          <Route path="/subscriptions" element={<Subscriptions />} />
+          <Route path="/settings" element={<Settings />} />
+          {/* Add more routes here as we build them */}
+          <Route path="*" element={<div className="p-8">Page not found</div>} />
+        </Route>
+      </Routes>
+    </BrowserRouter>
+  )
+}
 
 function App() {
   return (
     <FinanceProvider>
       <Preloader>
         <BiometricLockScreen>
-          <BrowserRouter>
-            <Routes>
-              <Route element={<AppLayout />}>
-                <Route path="/" element={<Dashboard />} />
-                <Route path="/projections" element={<Projections />} />
-                <Route path="/transactions" element={<Transactions />} />
-                <Route path="/wallets" element={<Wallets />} />
-                <Route path="/investments" element={<Investments />} />
-                <Route path="/categories" element={<Categories />} />
-                <Route path="/goals" element={<Goals />} />
-                <Route path="/budget" element={<Budget />} />
-                <Route path="/debts" element={<Debts />} />
-                <Route path="/contacts" element={<Contacts />} />
-                <Route path="/trips" element={<Trips />} />
-                <Route path="/subscriptions" element={<Subscriptions />} />
-                <Route path="/settings" element={<Settings />} />
-                {/* Add more routes here as we build them */}
-                <Route path="*" element={<div className="p-8">Page not found</div>} />
-              </Route>
-            </Routes>
-          </BrowserRouter>
+          <AppContent />
           <Toaster position="bottom-right" richColors theme="system" />
         </BiometricLockScreen>
       </Preloader>
