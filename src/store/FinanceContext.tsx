@@ -279,9 +279,16 @@ export function FinanceProvider({ children }: { children: React.ReactNode }) {
           
           // Update the original transaction's next date
           const nextNextDate = new Date(t.nextRecurringDate)
+          const prevTime = nextNextDate.getTime()
+
           if (t.recurringFrequency === "daily") nextNextDate.setDate(nextNextDate.getDate() + 1)
           if (t.recurringFrequency === "weekly") nextNextDate.setDate(nextNextDate.getDate() + 7)
           if (t.recurringFrequency === "monthly") nextNextDate.setMonth(nextNextDate.getMonth() + 1)
+          
+          // Safety fallback: if date didn't advance, force it to advance to prevent infinite loop
+          if (nextNextDate.getTime() === prevTime) {
+            nextNextDate.setDate(nextNextDate.getDate() + 1)
+          }
           
           return { ...t, nextRecurringDate: nextNextDate.toISOString() }
         }

@@ -103,7 +103,11 @@ export function Settings() {
     reader.readAsText(file)
   }
 
-  const handleClearData = () => {
+  const handleClearData = async () => {
+    if (user) {
+      // Also clear cloud data so it doesn't immediately restore
+      await supabase.from('user_backups').delete().eq('user_id', user.id)
+    }
     localStorage.removeItem(STORAGE_KEY)
     window.location.reload()
   }
