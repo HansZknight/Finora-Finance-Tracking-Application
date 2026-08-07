@@ -1,6 +1,6 @@
 import React from 'react'
 import { Outlet, NavLink } from 'react-router-dom'
-import { LayoutDashboard, Receipt, PieChart, Target, Settings, Tags, Repeat, CreditCard, LineChart, Wallet, TrendingUp, Download, Plus, Users, Plane, LogOut } from 'lucide-react'
+import { LayoutDashboard, Receipt, PieChart, Target, Settings, Tags, Repeat, CreditCard, LineChart, Wallet, TrendingUp, Download, Plus, Users, Plane, LogOut, ChevronLeft, ChevronRight } from 'lucide-react'
 import { cn } from '@/lib/utils'
 import { useTranslation } from 'react-i18next'
 
@@ -105,7 +105,18 @@ const sidebarNavItems = [
 export function AppLayout() {
   const { t } = useTranslation()
   const [isMobileMenuOpen, setIsMobileMenuOpen] = React.useState(false)
+  const [isSidebarCollapsed, setIsSidebarCollapsed] = React.useState(() => {
+    return localStorage.getItem('finora_sidebar_collapsed') === 'true'
+  })
   const { isInstallable, promptInstall } = usePWAInstall()
+
+  const toggleSidebar = () => {
+    setIsSidebarCollapsed(prev => {
+      const next = !prev
+      localStorage.setItem('finora_sidebar_collapsed', next.toString())
+      return next
+    })
+  }
 
   // Trigger Cmd+K programmatically
   const triggerCommandPalette = () => {
@@ -137,24 +148,46 @@ export function AppLayout() {
       </div>
 
       {/* Sidebar - Desktop */}
-      <aside className="hidden w-64 flex-col border-r bg-card/60 backdrop-blur-xl px-4 py-6 sm:flex relative z-10 shadow-[4px_0_24px_rgba(0,0,0,0.02)]">
-        <div className="mb-6 flex items-center gap-2 px-2">
-          <img src="/favicon.png" alt="Finora" className="h-8 w-8 rounded-lg" />
-          <span className="text-xl font-bold tracking-tight">Finora</span>
+      <aside className={cn(
+        "hidden flex-col border-r bg-card/60 backdrop-blur-xl py-6 sm:flex relative z-30 shadow-[4px_0_24px_rgba(0,0,0,0.02)] transition-all duration-300",
+        isSidebarCollapsed ? "w-20 px-2" : "w-64 px-4"
+      )}>
+        
+        {/* Toggle Button */}
+        <button 
+          onClick={toggleSidebar}
+          className="absolute -right-3.5 top-7 p-1 rounded-full border bg-background shadow-sm text-muted-foreground hover:bg-muted hover:text-foreground transition-colors z-50 flex items-center justify-center"
+        >
+          {isSidebarCollapsed ? <ChevronRight className="w-4 h-4" /> : <ChevronLeft className="w-4 h-4" />}
+        </button>
+
+        <div className={cn("mb-6 flex items-center gap-2", isSidebarCollapsed ? "justify-center" : "px-2")}>
+          <img src="/favicon.png" alt="Finora" className="h-8 w-8 rounded-lg shrink-0" />
+          {!isSidebarCollapsed && <span className="text-xl font-bold tracking-tight truncate">Finora</span>}
         </div>
         
         <div className="mb-6 px-2">
           <button 
             onClick={triggerCommandPalette}
-            className="flex w-full items-center justify-between rounded-md border bg-muted/50 px-3 py-2 text-sm text-muted-foreground shadow-sm hover:bg-muted transition-colors"
+            className={cn(
+              "flex w-full items-center rounded-md border bg-muted/50 py-2 text-sm text-muted-foreground shadow-sm hover:bg-muted transition-colors",
+              isSidebarCollapsed ? "justify-center px-0" : "justify-between px-3"
+            )}
+            title={isSidebarCollapsed ? t('nav.search') : undefined}
           >
-            <span className="flex items-center gap-2">
+            {isSidebarCollapsed ? (
               <span className="w-4 h-4">🔍</span>
-              {t('nav.search')}
-            </span>
-            <kbd className="pointer-events-none inline-flex h-5 select-none items-center gap-1 rounded border bg-background px-1.5 font-mono text-[10px] font-medium text-muted-foreground opacity-100">
-              <span className="text-xs">⌘</span>K
-            </kbd>
+            ) : (
+              <>
+                <span className="flex items-center gap-2 truncate">
+                  <span className="w-4 h-4 shrink-0">🔍</span>
+                  <span className="truncate">{t('nav.search')}</span>
+                </span>
+                <kbd className="pointer-events-none inline-flex h-5 select-none items-center gap-1 rounded border bg-background px-1.5 font-mono text-[10px] font-medium text-muted-foreground opacity-100 shrink-0">
+                  <span className="text-xs">⌘</span>K
+                </kbd>
+              </>
+            )}
           </button>
         </div>
 
@@ -167,13 +200,19 @@ export function AppLayout() {
               onClick={() => {}}
               className={({ isActive }) =>
                 cn(
-                  "flex items-center gap-3 rounded-full px-4 py-3 text-sm font-medium transition-all duration-200 hover:text-primary hover:bg-primary/5",
+                  "flex items-center gap-3 rounded-full py-3 text-sm font-medium transition-all duration-200 hover:text-primary hover:bg-primary/5",
+                  isSidebarCollapsed ? "justify-center px-0" : "px-4",
                   isActive ? "bg-primary text-primary-foreground shadow-sm" : "text-muted-foreground"
                 )
               }
+              title={isSidebarCollapsed ? (item.titleKey.startsWith('nav.') ? t(item.titleKey) : item.titleKey) : undefined}
             >
-              <item.icon className="h-4 w-4" />
-              {item.titleKey.startsWith('nav.') ? t(item.titleKey) : item.titleKey}
+              <item.icon className="h-4 w-4 shrink-0" />
+              {!isSidebarCollapsed && (
+                <span className="truncate">
+                  {item.titleKey.startsWith('nav.') ? t(item.titleKey) : item.titleKey}
+                </span>
+              )}
             </NavLink>
           ))}
         </nav>
@@ -182,19 +221,27 @@ export function AppLayout() {
           {isInstallable && (
             <button
               onClick={promptInstall}
-              className="flex w-full items-center justify-center gap-2 rounded-xl bg-gradient-to-r from-indigo-500 to-primary px-4 py-3 text-sm font-bold text-white shadow-lg hover:shadow-primary/25 transition-all duration-300 hover:scale-[1.02] active:scale-[0.98]"
+              title={isSidebarCollapsed ? "Install App" : undefined}
+              className={cn(
+                "flex w-full items-center justify-center gap-2 rounded-xl bg-gradient-to-r from-indigo-500 to-primary py-3 text-sm font-bold text-white shadow-lg hover:shadow-primary/25 transition-all duration-300 hover:scale-[1.02] active:scale-[0.98]",
+                isSidebarCollapsed ? "px-0" : "px-4"
+              )}
             >
-              <Download className="h-4 w-4" />
-              Install App
+              <Download className="h-4 w-4 shrink-0" />
+              {!isSidebarCollapsed && <span className="truncate">Install App</span>}
             </button>
           )}
           
           <button
             onClick={handleLogout}
-            className="flex w-full items-center gap-3 rounded-full px-4 py-3 text-sm font-medium transition-all duration-200 text-destructive hover:bg-destructive/10"
+            title={isSidebarCollapsed ? "Logout" : undefined}
+            className={cn(
+              "flex w-full items-center gap-3 rounded-full py-3 text-sm font-medium transition-all duration-200 text-destructive hover:bg-destructive/10",
+              isSidebarCollapsed ? "justify-center px-0" : "px-4"
+            )}
           >
-            <LogOut className="h-4 w-4" />
-            Logout
+            <LogOut className="h-4 w-4 shrink-0" />
+            {!isSidebarCollapsed && <span className="truncate">Logout</span>}
           </button>
         </div>
       </aside>
