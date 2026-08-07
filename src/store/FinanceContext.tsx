@@ -264,33 +264,34 @@ export function FinanceProvider({ children }: { children: React.ReactNode }) {
     
     const updatedTransactions = state.transactions.map(t => {
       if (t.isRecurring && t.nextRecurringDate) {
-        const nextDate = new Date(t.nextRecurringDate)
+        let currentNextDate = new Date(t.nextRecurringDate)
+        let loopCount = 0
         
-        if (nextDate <= now) {
+        if (currentNextDate <= now) {
           hasUpdates = true
           
-          // Create the new transaction instance
-          const clonedTxn: Transaction = {
-            ...t,
-            id: `txn_rec_${Date.now()}_${Math.random().toString(36).substr(2, 9)}`,
-            date: t.nextRecurringDate,
+          // Generate all missed occurrences up to now (max 500 to prevent freezing)
+          while (currentNextDate <= now && loopCount < 500) {
+            loopCount++
+            
+            const clonedTxn: Transaction = {
+              ...t,
+              id: `txn_rec_${Date.now()}_${Math.random().toString(36).substr(2, 9)}`,
+              date: currentNextDate.toISOString(),
+            }
+            newTransactions.push(clonedTxn)
+            
+            const prevTime = currentNextDate.getTime()
+            if (t.recurringFrequency === "daily") currentNextDate.setDate(currentNextDate.getDate() + 1)
+            if (t.recurringFrequency === "weekly") currentNextDate.setDate(currentNextDate.getDate() + 7)
+            if (t.recurringFrequency === "monthly") currentNextDate.setMonth(currentNextDate.getMonth() + 1)
+            
+            if (currentNextDate.getTime() === prevTime) {
+              currentNextDate.setDate(currentNextDate.getDate() + 1)
+            }
           }
-          newTransactions.push(clonedTxn)
           
-          // Update the original transaction's next date
-          const nextNextDate = new Date(t.nextRecurringDate)
-          const prevTime = nextNextDate.getTime()
-
-          if (t.recurringFrequency === "daily") nextNextDate.setDate(nextNextDate.getDate() + 1)
-          if (t.recurringFrequency === "weekly") nextNextDate.setDate(nextNextDate.getDate() + 7)
-          if (t.recurringFrequency === "monthly") nextNextDate.setMonth(nextNextDate.getMonth() + 1)
-          
-          // Safety fallback: if date didn't advance, force it to advance to prevent infinite loop
-          if (nextNextDate.getTime() === prevTime) {
-            nextNextDate.setDate(nextNextDate.getDate() + 1)
-          }
-          
-          return { ...t, nextRecurringDate: nextNextDate.toISOString() }
+          return { ...t, nextRecurringDate: currentNextDate.toISOString() }
         }
       }
       return t
