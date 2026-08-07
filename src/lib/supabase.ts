@@ -1,13 +1,7 @@
 import { createClient } from '@supabase/supabase-js'
 
-const supabaseUrl = import.meta.env.VITE_SUPABASE_URL
-const supabaseAnonKey = import.meta.env.VITE_SUPABASE_ANON_KEY
+const supabaseUrl = 'https://gojtjabdfseugvayffhm.supabase.co'
+const supabaseAnonKey = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImdvanRqYWJkZnNldWd2YXlmZmhtIiwicm9sZSI6ImFub24iLCJpYXQiOjE3ODYwNzQyNTAsImV4cCI6MjEwMTY1MDI1MH0.gLU_EdKzyqfta-oBpJqvXFgYMXusx7sCuwcQPwAysfg'
 
-if (!supabaseUrl || !supabaseAnonKey) {
-  console.warn('Supabase URL or Anon Key is missing. Cloud sync will not work.')
-}
+export const supabase = createClient(supabaseUrl, supabaseAnonKey)
 
-export const supabase = createClient(
-  supabaseUrl || 'https://placeholder.supabase.co',
-  supabaseAnonKey || 'placeholder'
-)
