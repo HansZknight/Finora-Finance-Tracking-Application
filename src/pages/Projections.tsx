@@ -597,7 +597,7 @@ export function Projections() {
         </div>
 
         {/* AI Tax Estimator Section */}
-        <div className="pt-4">
+        <div className="pt-4 md:col-span-3">
           <Card className="border-sky-500/20 shadow-xl shadow-sky-500/5 relative overflow-hidden bg-gradient-to-br from-card to-card/50">
             <div className="hidden sm:block absolute right-0 top-0 w-64 h-64 bg-sky-500/10 rounded-full blur-[80px] -translate-y-1/2 translate-x-1/2 pointer-events-none" />
             <div className="hidden sm:block absolute left-0 bottom-0 w-64 h-64 bg-indigo-500/10 rounded-full blur-[80px] translate-y-1/2 -translate-x-1/2 pointer-events-none" />
@@ -654,7 +654,9 @@ export function Projections() {
         </div>
         
         {/* FIRE Simulator Section */}
-        <FIRESimulator />
+        <div className="md:col-span-3">
+          <FIRESimulator />
+        </div>
       </div>
     </div>
   )
