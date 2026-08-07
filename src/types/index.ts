@@ -127,5 +127,6 @@ export const AppStateSchema = z.object({
   biometricCredentialId: z.string().nullable().default(null).optional(),
   isPro: z.boolean().default(false).optional(),
   licenseKey: z.string().optional(),
+  lastUpdated: z.number().optional(),
 })
 export type AppState = z.infer<typeof AppStateSchema>

@@ -164,9 +164,15 @@ export function FinanceProvider({ children }: { children: React.ReactNode }) {
     }
   }, [state.wallets, state.transactions.length])
 
+  const isInitialMount = React.useRef(true)
   // Persist state changes locally
   useEffect(() => {
+    if (isInitialMount.current) {
+      isInitialMount.current = false
+      return
+    }
     setItem(STORAGE_KEY, state)
+    localStorage.setItem('finora_last_updated', Date.now().toString())
   }, [state])
 
   // Handle Supabase Auth
@@ -182,7 +188,7 @@ export function FinanceProvider({ children }: { children: React.ReactNode }) {
         setSyncStatus('syncing')
         supabase
           .from('user_backups')
-          .select('app_state')
+          .select('app_state, updated_at')
           .eq('user_id', session.user.id)
           .single()
           .then((res) => {
@@ -195,15 +201,14 @@ export function FinanceProvider({ children }: { children: React.ReactNode }) {
               // Validate and apply cloud state
               const parsed = AppStateSchema.safeParse(data.app_state)
               if (parsed.success) {
-                // To avoid overwriting existing local data silently, 
-                // we'll only restore if the cloud data has more transactions,
-                // or if local is basically empty.
-                setState(prev => {
-                  if (parsed.data.transactions.length >= prev.transactions.length) {
-                    return parsed.data
-                  }
-                  return prev
-                })
+                const cloudTime = new Date(data.updated_at).getTime()
+                const localTime = parseInt(localStorage.getItem('finora_last_updated') || '0', 10)
+                
+                // Only restore if cloud data is strictly newer than local data
+                if (cloudTime > localTime) {
+                  setState(parsed.data)
+                  localStorage.setItem('finora_last_updated', cloudTime.toString())
+                }
               }
             }
             setSyncStatus('success')
